@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/beranda"
+            android:title="Beranda" />
+        <item
+            android:id="@+id/edukasi_bencana"
+            android:title="Edukasi Bencana" />
+        <item
+            android:id="@+id/berita"
+            android:title="Berita" />
+        <item
+            android:id="@+id/posko_evakuasi"
+            android:title="Posko Evakuasi" />
+        <item
+            android:id="@+id/pengaturan"
+            android:title="Pengaturan" />
+    </group>
+
+</menu>
