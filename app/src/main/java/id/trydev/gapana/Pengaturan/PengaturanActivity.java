@@ -14,6 +14,8 @@ public class PengaturanActivity extends AppCompatActivity {
         setContentView(R.layout.activity_pengumuman);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setTitle("Pengaturan");
     }
 
     @Override

@@ -17,6 +17,7 @@
             android:id="@+id/posko_evakuasi"
             android:title="Posko Evakuasi" />
         <item
+            android:checkable="false"
             android:id="@+id/pengaturan"
             android:title="Pengaturan" />
     </group>

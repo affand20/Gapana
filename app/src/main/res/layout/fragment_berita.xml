@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/swipe_refresh_layout"
+    android:background="@android:color/white"
     android:layout_height="match_parent">
 
-</android.support.constraint.ConstraintLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <com.synnapps.carouselview.CarouselView
+                app:strokeColor="@android:color/white"
+                app:fillColor="@android:color/white"
+                android:id="@+id/carousel_view"
+                android:layout_width="match_parent"
+                app:radius="8dp"
+                app:indicatorMarginHorizontal="16dp"
+                app:indicatorMarginVertical="16dp"
+                android:layout_height="250dp"/>
+            <android.support.v7.widget.RecyclerView
+                android:layout_below="@id/carousel_view"
+                android:id="@+id/rv_berita"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
+    </ScrollView>
+</android.support.v4.widget.SwipeRefreshLayout>
