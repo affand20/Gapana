@@ -6,7 +6,7 @@
     android:background="@android:color/white"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <RelativeLayout
@@ -23,9 +23,10 @@
                 android:layout_height="250dp"/>
             <android.support.v7.widget.RecyclerView
                 android:layout_below="@id/carousel_view"
+                android:nestedScrollingEnabled="false"
                 android:id="@+id/rv_berita"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </RelativeLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

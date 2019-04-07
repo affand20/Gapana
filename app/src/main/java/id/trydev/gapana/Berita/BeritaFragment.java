@@ -1,8 +1,12 @@
 package id.trydev.gapana.Berita;
 
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,6 +32,7 @@ import id.trydev.gapana.Berita.Adapter.BeritaAdapter;
 import id.trydev.gapana.Berita.Adapter.CarouselAdapter;
 import id.trydev.gapana.Berita.Model.Berita;
 import id.trydev.gapana.R;
+import id.trydev.gapana.Utils.ItemClickSupport;
 
 public class BeritaFragment extends Fragment implements BeritaView {
 
@@ -46,6 +51,7 @@ public class BeritaFragment extends Fragment implements BeritaView {
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Berita");
+        ((MainActivity) getActivity()).setNavigationItemSelected(R.id.berita);
     }
 
     @Nullable
@@ -65,13 +71,10 @@ public class BeritaFragment extends Fragment implements BeritaView {
         rvBerita.setLayoutManager(new GridLayoutManager(getActivity().getApplicationContext(), 0b10));
 
         presenter = new BeritaPresenter(this);
-        beritaAdapter = new BeritaAdapter(listBerita);
-        rvBerita.setAdapter(beritaAdapter);
 
         presenter.get5NewestBerita();
         presenter.getBerita();
 
-        listBerita = new ArrayList<>();
         carouselView.setImageListener(new ImageListener() {
             @Override
             public void setImageForPosition(int position, ImageView imageView) {
@@ -81,7 +84,11 @@ public class BeritaFragment extends Fragment implements BeritaView {
         carouselView.setImageClickListener(new ImageClickListener() {
             @Override
             public void onClick(int position) {
-                Toast.makeText(getActivity().getApplicationContext(), listBeritaCarousel.get(position).getJudul()+" Clicked !", Toast.LENGTH_SHORT).show();
+                Uri uri = Uri.parse(listBeritaCarousel.get(position).getUrl());
+                CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = intentBuilder.build();
+                customTabsIntent.launchUrl(getActivity().getApplicationContext(), uri);
+                intentBuilder.setCloseButtonIcon(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.ic_close_black_24dp));
             }
         });
 
@@ -90,6 +97,18 @@ public class BeritaFragment extends Fragment implements BeritaView {
             public void onRefresh() {
                 presenter.get5NewestBerita();
                 presenter.getBerita();
+            }
+        });
+
+        ItemClickSupport.addTo(rvBerita).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Log.d("LIST BERITA", "showListBerita: "+listBerita.size());
+                Uri uri = Uri.parse(listBerita.get(position).getUrl());
+                CustomTabsIntent.Builder intentBuilder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = intentBuilder.build();
+                customTabsIntent.launchUrl(getActivity().getApplicationContext(), uri);
+                intentBuilder.setCloseButtonIcon(BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.ic_close_black_24dp));
             }
         });
     }
@@ -103,6 +122,7 @@ public class BeritaFragment extends Fragment implements BeritaView {
 
     @Override
     public void showLoading() {
+        carouselView.setViewListener(null);
         swipeRefreshLayout.setRefreshing(true);
     }
 
@@ -125,6 +145,8 @@ public class BeritaFragment extends Fragment implements BeritaView {
     public void showListBerita(List<Berita> listBeritaGrid) {
         this.listBerita.clear();
         this.listBerita.addAll(listBeritaGrid);
-        beritaAdapter.notifyDataSetChanged();
+        Log.d("LIST BERITA", "showListBerita: "+listBerita.get(0).getUrl());
+        beritaAdapter = new BeritaAdapter(this.listBerita);
+        rvBerita.setAdapter(beritaAdapter);
     }
 }

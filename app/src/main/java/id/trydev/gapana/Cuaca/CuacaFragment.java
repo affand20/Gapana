@@ -72,8 +72,6 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
 
         mapView.getMapAsync(this);
 
-
-
     }
 
 
@@ -85,7 +83,7 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
     @Override
     public void onMapReady(@NonNull MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap;
-        mapboxMap.setStyle(Style.TRAFFIC_NIGHT, new Style.OnStyleLoaded() {
+        mapboxMap.setStyle(Style.TRAFFIC_DAY, new Style.OnStyleLoaded() {
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
@@ -137,6 +135,7 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Beranda");
+        ((MainActivity) getActivity()).setNavigationItemSelected(R.id.beranda);
         mapView.onResume();
     }
 

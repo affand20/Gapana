@@ -28,6 +28,8 @@ import id.trydev.gapana.R;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         getSupportActionBar().setTitle("Beranda");
@@ -108,5 +110,9 @@ public class MainActivity extends AppCompatActivity
 
     public void setActionBarTitle(String msg){
         getSupportActionBar().setTitle(msg);
+    }
+
+    public void setNavigationItemSelected(int id){
+        navigationView.setCheckedItem(id);
     }
 }

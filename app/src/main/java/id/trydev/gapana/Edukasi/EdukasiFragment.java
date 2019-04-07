@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 
 import id.trydev.gapana.Base.MainActivity;
 import id.trydev.gapana.Edukasi.EdukasiPasca.PascaFragment;
-import id.trydev.gapana.Edukasi.EdukasiPra.PraFragment;
+import id.trydev.gapana.Edukasi.EdukasiPra.EdukasiPraFragment;
 import id.trydev.gapana.R;
 
 public class EdukasiFragment extends Fragment {
@@ -56,7 +56,7 @@ public class EdukasiFragment extends Fragment {
         public Fragment getItem(int i) {
             switch (i){
                 case 0:
-                    return new PraFragment();
+                    return new EdukasiPraFragment();
                 case 1:
                     return new PascaFragment();
             }
@@ -85,5 +85,6 @@ public class EdukasiFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setActionBarTitle("Edukasi Bencana");
+        ((MainActivity) getActivity()).setNavigationItemSelected(R.id.edukasi_bencana);
     }
 }

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import id.trydev.gapana.Base.MainActivity;
 import id.trydev.gapana.R;
 
 public class PoskoFragment extends Fragment {
@@ -21,5 +22,12 @@ public class PoskoFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).setActionBarTitle("Posko Evakuasi");
+        ((MainActivity) getActivity()).setNavigationItemSelected(R.id.posko_evakuasi);
     }
 }

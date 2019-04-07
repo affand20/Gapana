@@ -1,0 +1,35 @@
+{
+  "project_info": {
+    "project_number": "407432302370",
+    "firebase_url": "https://gapana-3283b.firebaseio.com",
+    "project_id": "gapana-3283b",
+    "storage_bucket": "gapana-3283b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407432302370:android:85c88d2fa98f2575",
+        "android_client_info": {
+          "package_name": "id.trydev.gapana"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2VcYmVMW31Xc32qqcf8nlyMalfn1kyjM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407432302370-in9lh9nru0o0dfdv1uo0fo1rnvvdtnrd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
