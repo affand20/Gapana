@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.mapbox.mapboxsdk.Mapbox;
 
 import id.trydev.gapana.Berita.BeritaFragment;
@@ -38,6 +39,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         Mapbox.getInstance(this, BuildConfig.TOKEN);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("bencana");
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
