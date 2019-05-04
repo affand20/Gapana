@@ -117,59 +117,61 @@ public class PoskoFragment extends Fragment implements CuacaView, OnMapReadyCall
                         getActivity().getResources().getDisplayMetrics().density
                 );
 
-                byte[] metadata;
-                try {
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("FIELD_REGION_NAME", "Surabaya");
-                    String json = jsonObject.toString();
-                    metadata = json.getBytes("UTF-8");
-                } catch (Exception exception) {
-                    Timber.e("Failed to encode metadata: %s", exception.getMessage());
-                    metadata = null;
-                }
+
+
+//                byte[] metadata;
+//                try {
+//                    JSONObject jsonObject = new JSONObject();
+//                    jsonObject.put("FIELD_REGION_NAME", "Surabaya");
+//                    String json = jsonObject.toString();
+//                    metadata = json.getBytes("UTF-8");
+//                } catch (Exception exception) {
+//                    Timber.e("Failed to encode metadata: %s", exception.getMessage());
+//                    metadata = null;
+//                }
+////
+//                offlineManager.createOfflineRegion(
+//                        definition,
+//                        metadata,
+//                        new OfflineManager.CreateOfflineRegionCallback() {
+//                            @Override
+//                            public void onCreate(OfflineRegion offlineRegion) {
+//                                offlineRegion.setDownloadState(OfflineRegion.STATE_ACTIVE);
 //
-                offlineManager.createOfflineRegion(
-                        definition,
-                        metadata,
-                        new OfflineManager.CreateOfflineRegionCallback() {
-                            @Override
-                            public void onCreate(OfflineRegion offlineRegion) {
-                                offlineRegion.setDownloadState(OfflineRegion.STATE_ACTIVE);
-
-                                offlineRegion.setObserver(new OfflineRegion.OfflineRegionObserver() {
-                                    @Override
-                                    public void onStatusChanged(OfflineRegionStatus status) {
-                                        double percentage = status.getRequiredResourceCount() >= 0
-                                                ? (100.0 * status.getCompletedResourceCount() / status.getRequiredResourceCount()) :
-                                                0.0;
-                                        Log.d(TAG, "onStatusChanged: "+percentage);
-                                        Toast.makeText(getActivity(), "percentage: "+percentage, Toast.LENGTH_SHORT).show();
-                                        if (status.isComplete()){
-                                            Toast.makeText(getActivity(), "Region downloaded successfully", Toast.LENGTH_SHORT).show();
-                                            Log.d(TAG, "Region downloaded successfully.");
-                                        } else if (status.isRequiredResourceCountPrecise()){
-                                            Log.d(TAG, ""+percentage);
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onError(OfflineRegionError error) {
-                                        Log.e(TAG, "onError reason: "+error.getReason());
-                                        Log.e(TAG, "onError message: "+error.getMessage());
-                                    }
-
-                                    @Override
-                                    public void mapboxTileCountLimitExceeded(long limit) {
-                                        Timber.e("mapboxTileCountLimitExceeded: %s", limit);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                Timber.e("onError: %s", error);
-                            }
-                        });
+//                                offlineRegion.setObserver(new OfflineRegion.OfflineRegionObserver() {
+//                                    @Override
+//                                    public void onStatusChanged(OfflineRegionStatus status) {
+//                                        double percentage = status.getRequiredResourceCount() >= 0
+//                                                ? (100.0 * status.getCompletedResourceCount() / status.getRequiredResourceCount()) :
+//                                                0.0;
+//                                        Log.d(TAG, "onStatusChanged: "+percentage);
+//                                        Toast.makeText(getActivity(), "percentage: "+percentage, Toast.LENGTH_SHORT).show();
+//                                        if (status.isComplete()){
+//                                            Toast.makeText(getActivity(), "Region downloaded successfully", Toast.LENGTH_SHORT).show();
+//                                            Log.d(TAG, "Region downloaded successfully.");
+//                                        } else if (status.isRequiredResourceCountPrecise()){
+//                                            Log.d(TAG, ""+percentage);
+//                                        }
+//                                    }
+//
+//                                    @Override
+//                                    public void onError(OfflineRegionError error) {
+//                                        Log.e(TAG, "onError reason: "+error.getReason());
+//                                        Log.e(TAG, "onError message: "+error.getMessage());
+//                                    }
+//
+//                                    @Override
+//                                    public void mapboxTileCountLimitExceeded(long limit) {
+//                                        Timber.e("mapboxTileCountLimitExceeded: %s", limit);
+//                                    }
+//                                });
+//                            }
+//
+//                            @Override
+//                            public void onError(String error) {
+//                                Timber.e("onError: %s", error);
+//                            }
+//                        });
             }
         });
     }
@@ -211,31 +213,31 @@ public class PoskoFragment extends Fragment implements CuacaView, OnMapReadyCall
     public void onPause() {
         super.onPause();
         mapView.onPause();
-        if (offlineManager!=null){
-            offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
-                @Override
-                public void onList(OfflineRegion[] offlineRegions) {
-                    if (offlineRegions.length>0){
-                        offlineRegions[(offlineRegions.length-1)].delete(new OfflineRegion.OfflineRegionDeleteCallback() {
-                            @Override
-                            public void onDelete() {
-                                Toast.makeText(getActivity(), "Region Deleted", Toast.LENGTH_SHORT).show();
-                            }
-
-                            @Override
-                            public void onError(String error) {
-                                Timber.e("On delete error: %s",error);
-                            }
-                        });
-                    }
-                }
-
-                @Override
-                public void onError(String error) {
-                    Timber.e("onListError: %s", error);
-                }
-            });
-        }
+//        if (offlineManager!=null){
+//            offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
+//                @Override
+//                public void onList(OfflineRegion[] offlineRegions) {
+//                    if (offlineRegions.length>0){
+//                        offlineRegions[(offlineRegions.length-1)].delete(new OfflineRegion.OfflineRegionDeleteCallback() {
+//                            @Override
+//                            public void onDelete() {
+//                                Toast.makeText(getActivity(), "Region Deleted", Toast.LENGTH_SHORT).show();
+//                            }
+//
+//                            @Override
+//                            public void onError(String error) {
+//                                Timber.e("On delete error: %s",error);
+//                            }
+//                        });
+//                    }
+//                }
+//
+//                @Override
+//                public void onError(String error) {
+//                    Timber.e("onListError: %s", error);
+//                }
+//            });
+//        }
     }
 
     @Override
