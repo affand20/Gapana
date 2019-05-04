@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:padding="@dimen/activity_horizontal_margin"
-            android:textColor="android:color/black"/>
+            android:textColor="@color/browser_actions_text_color"/>
     </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>

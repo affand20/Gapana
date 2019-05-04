@@ -9,4 +9,7 @@
     <string name="user_location_permission_explanation">This app needs location permissions to show its functionality.</string>
     <string name="user_location_permission_not_granted">You didn\'t grant location permissions.</string>
     <string name="title_activity_list_view_panduan">ListViewPanduan</string>
+    <string name="Tentang">ini sisinya tentang tentang</string>
+    <string name="penjelasanNotifSekitar">Anda dapat menyalakan / mematikan Notifikasi bencana yang berlokasi 100 m dari anda </string>
+    <string name="penjelasanNotifBencana">Anda dapat menyalakan / mematikan Notifikasi Bencana di Wilayah Seluruh Indonesia</string>
 </resources>
