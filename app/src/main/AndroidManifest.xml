@@ -13,8 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Pengaturan.PanduanActivity"></activity>
         <activity android:name=".Pengaturan.TentangActivity" />
-        <activity android:name=".Pengaturan.PanduanActivity" />
         <activity android:name=".Edukasi.EdukasiPra.Detail.DetailEdukasiPraActivity" />
         <activity android:name=".Pengaturan.PengaturanActivity" />
 
