@@ -13,10 +13,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".ListViewPanduan"
-            android:label="@string/title_activity_list_view_panduan"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity android:name=".Pengaturan.TentangActivity" />
         <activity android:name=".Pengaturan.PanduanActivity" />
         <activity android:name=".Edukasi.EdukasiPra.Detail.DetailEdukasiPraActivity" />
