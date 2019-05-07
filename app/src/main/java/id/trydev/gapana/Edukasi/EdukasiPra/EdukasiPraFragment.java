@@ -8,11 +8,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import id.trydev.gapana.Edukasi.EdukasiPra.Adapter.EdukasiPraAdapter;
@@ -27,7 +30,7 @@ public class EdukasiPraFragment extends Fragment implements EdukasiPraView{
     private RecyclerView rvEdukasiPra;
     private TextView emptyText;
 
-    private List<EdukasiPra> listEdukasiPra;
+    private List<EdukasiPra> listEdukasiPra = new ArrayList<>();
 
     private EdukasiPraAdapter adapter;
     private EdukasiPraPresenter presenter;
@@ -42,6 +45,8 @@ public class EdukasiPraFragment extends Fragment implements EdukasiPraView{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Toast.makeText(getActivity(), "TOAST!!!!!!!", Toast.LENGTH_SHORT).show();
+
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         rvEdukasiPra = view.findViewById(R.id.rv_edukasi_pra);
         emptyText = view.findViewById(R.id.empty_text);
@@ -52,6 +57,7 @@ public class EdukasiPraFragment extends Fragment implements EdukasiPraView{
         adapter = new EdukasiPraAdapter(listEdukasiPra);
         rvEdukasiPra.setAdapter(adapter);
 
+        presenter.getEdukasiPra();
         // if data has been expired, fetch data from server
 //        presenter.getDataFromServer();
         // else fetch data from local
@@ -60,10 +66,7 @@ public class EdukasiPraFragment extends Fragment implements EdukasiPraView{
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // if data has been expired, fetch data from server
-//        presenter.getDataFromServer();
-                // else fetch data from local
-//        presenter.getDataFromLocal();
+            presenter.getEdukasiPra();
             }
         });
 
@@ -96,7 +99,8 @@ public class EdukasiPraFragment extends Fragment implements EdukasiPraView{
     @Override
     public void showData(List<EdukasiPra> listKontenEdukasiPra) {
         this.listEdukasiPra.clear();
-        this.listEdukasiPra = listKontenEdukasiPra;
+        this.listEdukasiPra.addAll(listKontenEdukasiPra);
+        Log.d("EDUKASI PRA", "listKontenEdukasiPra : "+listKontenEdukasiPra.size()+", listEdukasiPra : "+listEdukasiPra.size());
         adapter.notifyDataSetChanged();
         rvEdukasiPra.setVisibility(View.VISIBLE);
         emptyText.setVisibility(View.GONE);
