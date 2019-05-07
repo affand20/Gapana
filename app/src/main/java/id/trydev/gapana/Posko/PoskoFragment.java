@@ -1,6 +1,7 @@
 package id.trydev.gapana.Posko;
 
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,6 +15,9 @@ import android.widget.Toast;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
@@ -31,10 +35,14 @@ import com.mapbox.mapboxsdk.plugins.offline.model.NotificationOptions;
 import com.mapbox.mapboxsdk.plugins.offline.model.OfflineDownloadOptions;
 import com.mapbox.mapboxsdk.plugins.offline.offline.OfflinePlugin;
 import com.mapbox.mapboxsdk.plugins.offline.utils.OfflineUtils;
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import id.trydev.gapana.Base.MainActivity;
@@ -44,6 +52,7 @@ import id.trydev.gapana.R;
 import timber.log.Timber;
 
 import static android.support.constraint.Constraints.TAG;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
 
 public class PoskoFragment extends Fragment implements CuacaView, OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
 
@@ -100,6 +109,38 @@ public class PoskoFragment extends Fragment implements CuacaView, OnMapReadyCall
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
+
+                List<Feature> markerCoordinates = new ArrayList<>();
+                markerCoordinates.add(Feature.fromGeometry(
+                        Point.fromLngLat(112.729967,-7.287692 )));
+                markerCoordinates.add(Feature.fromGeometry(
+                        Point.fromLngLat(112.728317,-7.296143 )));
+                markerCoordinates.add(Feature.fromGeometry(
+                        Point.fromLngLat(112.730536,-7.287010 )));
+
+                style.addSource(new GeoJsonSource("marker-source",
+                        FeatureCollection.fromFeatures(markerCoordinates)));
+
+// Add the marker image to map
+                style.addImage("my-marker-image", BitmapFactory.decodeResource(
+                        PoskoFragment.this.getResources(), R.drawable.blue_marker_view));
+
+// Adding an offset so that the bottom of the blue icon gets fixed to the coordinate, rather than the
+// middle of the icon being fixed to the coordinate point.
+                style.addLayer(new SymbolLayer("marker-layer", "marker-source")
+                        .withProperties(PropertyFactory.iconImage("my-marker-image"),
+                                iconOffset(new Float[]{0f, -9f})));
+
+// Add the selected marker source and layer
+                style.addSource(new GeoJsonSource("selected-marker"));
+
+// Adding an offset so that the bottom of the blue icon gets fixed to the coordinate, rather than the
+// middle of the icon being fixed to the coordinate point.
+                style.addLayer(new SymbolLayer("selected-marker-layer", "selected-marker")
+                        .withProperties(PropertyFactory.iconImage("my-marker-image"),
+                                iconOffset(new Float[]{0f, -9f})));
+
+                mapboxMap.addOnMapClickListener(PoskoFragment.this);
 
                 offlineManager = OfflineManager.getInstance(getActivity());
                 LatLngBounds latLngBounds = new LatLngBounds.Builder()
