@@ -9,11 +9,14 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".Pengaturan.PanduanActivity"></activity>
+        <activity android:name=".Pengaturan.TentangActivity" />
+        <activity android:name=".Edukasi.EdukasiPra.Detail.DetailEdukasiPraActivity" />
         <receiver
             android:name=".Notifikasi.BencanaReceiver"
             android:enabled="true"
@@ -29,7 +32,6 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".Edukasi.EdukasiPra.Detail.DetailEdukasiPraActivity" />
         <activity android:name=".Pengaturan.PengaturanActivity" />
 
         <meta-data
