@@ -3,6 +3,7 @@ package id.trydev.gapana.Edukasi.EdukasiPra.Adapter;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,10 +59,13 @@ public class EdukasiPraAdapter extends RecyclerView.Adapter<EdukasiPraAdapter.Vi
         public void bindItem(EdukasiPra item){
             judul.setText(item.getJudul());
             kategori.setText(item.getKategori());
-            GlideApp.with(itemView)
-                    .asBitmap()
-                    .load(item.getListGambar().get(0))
-                    .into(berita);
+            String url = item.getListGambar().split(",")[0];
+            Log.d("URL IMAGE", "bindItem: "+url);
+//            GlideApp.with(itemView)
+            berita.setImageResource(itemView.getContext().getResources().getIdentifier(url, "drawable", itemView.getContext().getPackageName()));
+//                    .asBitmap()
+//                    .load(url)
+//                    .into(berita);
 //            isi.setText(item.getIsi());
 
         }

@@ -7,15 +7,17 @@
     app:contentPaddingBottom="16dp"
     android:layout_marginTop="8dp"
     android:layout_marginBottom="8dp"
-    android:layout_marginRight="16dp"
-    android:layout_marginLeft="16dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginLeft="8dp"
     android:id="@+id/card"
     app:cardElevation="4dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="4dp">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <ImageView
+            android:scaleType="centerCrop"
+            android:adjustViewBounds="true"
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:id="@+id/berita"/>
