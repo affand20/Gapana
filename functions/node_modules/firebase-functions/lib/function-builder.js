@@ -1,0 +1,262 @@
+"use strict";
+// The MIT License (MIT)
+//
+// Copyright (c) 2017 Firebase
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+Object.defineProperty(exports, "__esModule", { value: true });
+const _ = require("lodash");
+const analytics = require("./providers/analytics");
+const auth = require("./providers/auth");
+const crashlytics = require("./providers/crashlytics");
+const database = require("./providers/database");
+const firestore = require("./providers/firestore");
+const https = require("./providers/https");
+const pubsub = require("./providers/pubsub");
+const remoteConfig = require("./providers/remoteConfig");
+const storage = require("./providers/storage");
+/**
+ * List of all regions supported by Cloud Functions.
+ */
+const SUPPORTED_REGIONS = [
+    'us-central1',
+    'us-east1',
+    'europe-west1',
+    'europe-west2',
+    'asia-east2',
+    'asia-northeast1',
+];
+/**
+ * List of available memory options supported by Cloud Functions.
+ */
+const VALID_MEMORY_OPTS = ['128MB', '256MB', '512MB', '1GB', '2GB'];
+/**
+ * Cloud Functions max timeout value.
+ */
+const MAX_TIMEOUT_SECONDS = 540;
+/**
+ * Assert that the runtime options passed in are valid.
+ * @param runtimeOptions object containing memory and timeout information.
+ * @throws { Error } Memory and TimeoutSeconds values must be valid.
+ */
+function assertRuntimeOptionsValid(runtimeOptions) {
+    if (runtimeOptions.memory &&
+        !_.includes(VALID_MEMORY_OPTS, runtimeOptions.memory)) {
+        throw new Error(`The only valid memory allocation values are: ${VALID_MEMORY_OPTS.join(', ')}`);
+    }
+    if (runtimeOptions.timeoutSeconds > MAX_TIMEOUT_SECONDS ||
+        runtimeOptions.timeoutSeconds < 0) {
+        throw new Error(`TimeoutSeconds must be between 0 and ${MAX_TIMEOUT_SECONDS}`);
+    }
+    return true;
+}
+/**
+ * Assert regions specified are valid.
+ * @param regions list of regions.
+ * @throws { Error } Regions must be in list of supported regions.
+ */
+function assertRegionsAreValid(regions) {
+    if (!regions.length) {
+        throw new Error('You must specify at least one region');
+    }
+    if (_.difference(regions, SUPPORTED_REGIONS).length) {
+        throw new Error(`The only valid regions are: ${SUPPORTED_REGIONS.join(', ')}`);
+    }
+    return true;
+}
+/**
+ * Configure the regions that the function is deployed to.
+ * @param regions One of more region strings.
+ * For example: `functions.region('us-east1')` or `functions.region('us-east1', 'us-central1')`
+ */
+function region(...regions) {
+    if (assertRegionsAreValid(regions)) {
+        return new FunctionBuilder({ regions });
+    }
+}
+exports.region = region;
+/**
+ * Configure runtime options for the function.
+ * @param runtimeOptions Object with 2 optional fields:
+ * 1. `timeoutSeconds`: timeout for the function in seconds, possible values are 0 to 540
+ * 2. `memory`: amount of memory to allocate to the function,
+ *    possible values are:  '128MB', '256MB', '512MB', '1GB', and '2GB'.
+ */
+function runWith(runtimeOptions) {
+    if (assertRuntimeOptionsValid(runtimeOptions)) {
+        return new FunctionBuilder(runtimeOptions);
+    }
+}
+exports.runWith = runWith;
+class FunctionBuilder {
+    constructor(options) {
+        this.options = options;
+    }
+    /**
+     * Configure the regions that the function is deployed to.
+     * @param regions One or more region strings.
+     * For example: `functions.region('us-east1')`  or `functions.region('us-east1', 'us-central1')`
+     */
+    region(...regions) {
+        if (assertRegionsAreValid(regions)) {
+            this.options.regions = regions;
+            return this;
+        }
+    }
+    /**
+     * Configure runtime options for the function.
+     * @param runtimeOptions Object with 2 optional fields:
+     * 1. timeoutSeconds: timeout for the function in seconds, possible values are 0 to 540
+     * 2. memory: amount of memory to allocate to the function, possible values are:
+     * '128MB', '256MB', '512MB', '1GB', and '2GB'.
+     */
+    runWith(runtimeOptions) {
+        if (assertRuntimeOptionsValid(runtimeOptions)) {
+            this.options = _.assign(this.options, runtimeOptions);
+            return this;
+        }
+    }
+    get https() {
+        return {
+            /**
+             * Handle HTTP requests.
+             * @param handler A function that takes a request and response object,
+             * same signature as an Express app.
+             */
+            onRequest: (handler) => https._onRequestWithOpts(handler, this.options),
+            /**
+             * Declares a callable method for clients to call using a Firebase SDK.
+             * @param handler A method that takes a data and context and returns a value.
+             */
+            onCall: (handler) => https._onCallWithOpts(handler, this.options),
+        };
+    }
+    get database() {
+        return {
+            /**
+             * Selects a database instance that will trigger the function.
+             * If omitted, will pick the default database for your project.
+             * @param instance The Realtime Database instance to use.
+             */
+            instance: (instance) => database._instanceWithOpts(instance, this.options),
+            /**
+             * Select Firebase Realtime Database Reference to listen to.
+             *
+             * This method behaves very similarly to the method of the same name in the
+             * client and Admin Firebase SDKs. Any change to the Database that affects the
+             * data at or below the provided `path` will fire an event in Cloud Functions.
+             *
+             * There are three important differences between listening to a Realtime
+             * Database event in Cloud Functions and using the Realtime Database in the
+             * client and Admin SDKs:
+             * 1. Cloud Functions allows wildcards in the `path` name. Any `path` component
+             *    in curly brackets (`{}`) is a wildcard that matches all strings. The value
+             *    that matched a certain invocation of a Cloud Function is returned as part
+             *    of the `context.params` object. For example, `ref("messages/{messageId}")`
+             *    matches changes at `/messages/message1` or `/messages/message2`, resulting
+             *    in  `context.params.messageId` being set to `"message1"` or `"message2"`,
+             *    respectively.
+             * 2. Cloud Functions do not fire an event for data that already existed before
+             *    the Cloud Function was deployed.
+             * 3. Cloud Function events have access to more information, including information
+             *    about the user who triggered the Cloud Function.
+             * @param ref Path of the database to listen to.
+             */
+            ref: (path) => database._refWithOpts(path, this.options),
+        };
+    }
+    get firestore() {
+        return {
+            /**
+             * Select the Firestore document to listen to for events.
+             * @param path Full database path to listen to. This includes the name of
+             * the collection that the document is a part of. For example, if the
+             * collection is named "users" and the document is named "Ada", then the
+             * path is "/users/Ada".
+             */
+            document: (path) => firestore._documentWithOpts(path, this.options),
+            /** @internal */
+            namespace: (namespace) => firestore._namespaceWithOpts(namespace, this.options),
+            /** @internal */
+            database: (database) => firestore._databaseWithOpts(database, this.options),
+        };
+    }
+    get crashlytics() {
+        return {
+            /**
+             * Handle events related to Crashlytics issues. An issue in Crashlytics is an
+             * aggregation of crashes which have a shared root cause.
+             */
+            issue: () => crashlytics._issueWithOpts(this.options),
+        };
+    }
+    get analytics() {
+        return {
+            /**
+             * Select analytics events to listen to for events.
+             * @param analyticsEventType Name of the analytics event type.
+             */
+            event: (analyticsEventType) => analytics._eventWithOpts(analyticsEventType, this.options),
+        };
+    }
+    get remoteConfig() {
+        return {
+            /**
+             * Handle all updates (including rollbacks) that affect a Remote Config
+             * project.
+             * @param handler A function that takes the updated Remote Config template
+             * version metadata as an argument.
+             */
+            onUpdate: (handler) => remoteConfig._onUpdateWithOpts(handler, this.options),
+        };
+    }
+    get storage() {
+        return {
+            /**
+             * The optional bucket function allows you to choose which buckets' events to handle.
+             * This step can be bypassed by calling object() directly, which will use the default
+             * Cloud Storage for Firebase bucket.
+             * @param bucket Name of the Google Cloud Storage bucket to listen to.
+             */
+            bucket: (bucket) => storage._bucketWithOpts(this.options, bucket),
+            /**
+             * Handle events related to Cloud Storage objects.
+             */
+            object: () => storage._objectWithOpts(this.options),
+        };
+    }
+    get pubsub() {
+        return {
+            /** Select Cloud Pub/Sub topic to listen to.
+             * @param topic Name of Pub/Sub topic, must belong to the same project as the function.
+             */
+            topic: (topic) => pubsub._topicWithOpts(topic, this.options),
+            schedule: (schedule) => pubsub._scheduleWithOpts(schedule, this.options),
+        };
+    }
+    get auth() {
+        return {
+            /**
+             * Handle events related to Firebase authentication users.
+             */
+            user: () => auth._userWithOpts(this.options),
+        };
+    }
+}
+exports.FunctionBuilder = FunctionBuilder;
