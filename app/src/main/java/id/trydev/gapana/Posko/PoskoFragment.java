@@ -124,6 +124,8 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
     private static final String DRIVING_ROUTE_POLYLINE_SOURCE_ID = "DRIVING_ROUTE_POLYLINE_SOURCE_ID";
     private static final int DRAW_SPEED_MILLISECONDS = 500;
 
+    private NomorPenting nomorPenting;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -165,6 +167,32 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
                 adapter = new PoskoAdapter(listNomorPenting);
                 rvNomorPenting.setAdapter(adapter);
 
+                ItemClickSupport.addTo(rvNomorPenting).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                        nomorPenting = listNomorPenting.get(position);
+
+                        if (Build.VERSION.SDK_INT > 22){
+                            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                                startActivity(new Intent(
+                                        Intent.ACTION_CALL, Uri.parse("tel:"+nomorPenting.getNomor())
+                                ));
+                            } else{
+                                ActivityCompat.requestPermissions(
+                                        getActivity(),
+                                        new String[]{Manifest.permission.CALL_PHONE},
+                                        100);
+                            }
+                        } else{
+                            startActivity(new Intent(
+                                    Intent.ACTION_CALL, Uri.parse("tel:"+nomorPenting.getNomor())
+                            ));
+                        }
+
+
+                    }
+                });
 
                 dialog.show();
             }
@@ -439,6 +467,13 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode==100){
+            if (grantResults!=null && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                startActivity(new Intent(
+                        Intent.ACTION_CALL, Uri.parse("tel:"+nomorPenting.getNomor())
+                ));
+            }
+        }
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
