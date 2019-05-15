@@ -37,6 +37,7 @@ import id.trydev.gapana.Cuaca.CuacaFragment;
 import id.trydev.gapana.Edukasi.EdukasiFragment;
 import id.trydev.gapana.Edukasi.EdukasiPra.Model.EdukasiPra;
 import id.trydev.gapana.Pengaturan.PengaturanActivity;
+import id.trydev.gapana.Posko.Model.NomorPenting;
 import id.trydev.gapana.Posko.PoskoFragment;
 import id.trydev.gapana.R;
 import id.trydev.gapana.Utils.AppDatabase;
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "edukasipra")
+                AppDatabase.class, "gapana")
                 .allowMainThreadQueries()
                 .build();
 
@@ -70,10 +71,11 @@ public class MainActivity extends AppCompatActivity
 
         preferences = new AppPreferences(this);
 
-        Log.d("PREFERENCES", "is First Run : "+preferences.getFirstRun());
-
         if (preferences.getFirstRun()==0){
             importDb();
+            importDbNomorTelepon();
+
+            preferences.setFirstRun(1);
         }
 
         Mapbox.getInstance(this, BuildConfig.TOKEN);
@@ -114,9 +116,29 @@ public class MainActivity extends AppCompatActivity
                 edukasiPra.setListGambar(lineSplitter[4]);
                 db.edukasiPraDao().insert(edukasiPra);
             }
-            preferences.setFirstRun(1);
-            Log.d("PREFERENCES", "is First Run : "+preferences.getFirstRun());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void importDbNomorTelepon(){
+        try {
+            InputStreamReader is = new InputStreamReader(getApplicationContext()
+                    .getAssets()
+                    .open("nomortelepon.csv"));
+            BufferedReader reader = new BufferedReader(is);
+            reader.readLine();
+            String line = "";
+            while ((line = reader.readLine()) != null){
+                String lineSplitter[] = line.split(",");
+                Log.d("ROOM DATABASE", lineSplitter[0]+" "+lineSplitter[1]+" "+lineSplitter[2]);
+                NomorPenting nomorPenting = new NomorPenting();
+                nomorPenting.setId(Integer.parseInt(lineSplitter[0]));
+                nomorPenting.setNama(lineSplitter[1]);
+                nomorPenting.setNomor(lineSplitter[2]);
+                db.nomorPentingDao().inserAll(nomorPenting);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
