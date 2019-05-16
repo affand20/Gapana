@@ -14,4 +14,8 @@
     berada pada radius 100 m dari tempat bencana.</string>
     <string name="penjelasanNotifSekitar">Anda dapat menyalakan / mematikan Notifikasi bencana yang berlokasi 100 m dari anda </string>
     <string name="penjelasanNotifBencana">Anda dapat menyalakan / mematikan Notifikasi Bencana di Wilayah Seluruh Indonesia</string>
+    <string name="channel_id">101</string>
+    <string name="ch_name">gapana</string>
+    <string name="channel_description">This is gapana channel !</string>
+    <string name="info_gempa">Telah terjadi gempa %1s SR %2s</string>
 </resources>

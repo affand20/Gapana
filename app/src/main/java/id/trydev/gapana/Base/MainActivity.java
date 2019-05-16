@@ -1,9 +1,16 @@
 package id.trydev.gapana.Base;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.location.LocationListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -51,6 +59,7 @@ public class MainActivity extends AppCompatActivity
 
     public static AppDatabase db;
     public static AppPreferences preferences;
+//    public static LocationManager lm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +78,10 @@ public class MainActivity extends AppCompatActivity
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
+        createNotificationChannel();
+
         preferences = new AppPreferences(this);
+//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (preferences.getFirstRun()==0){
             importDb();
@@ -91,10 +103,28 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportActionBar().setTitle("Beranda");
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CuacaFragment()).commit();
+        if (getIntent().getStringExtra("redirect")!=null){
+            getSupportActionBar().setTitle("Posko Evakuasi");
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new PoskoFragment()).commit();
+        } else{
+            getSupportActionBar().setTitle("Beranda");
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CuacaFragment()).commit();
+        }
         navigationView.setCheckedItem(R.id.beranda);
 
+    }
+
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = getString(R.string.ch_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(getResources().getString(R.string.channel_id), name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void importDb() {

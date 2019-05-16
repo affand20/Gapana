@@ -96,6 +96,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 import static id.trydev.gapana.Base.MainActivity.db;
+import static id.trydev.gapana.Base.MainActivity.preferences;
 
 public class PoskoFragment extends Fragment implements OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
 
@@ -209,10 +210,9 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
                     Location lastLocation = result.getLastLocation();
                     lastLatitude = lastLocation.getLatitude();
                     lastLongitude = lastLocation.getLongitude();
-//                    Toast.makeText(context, "Updating lat long", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Updating lat long");
-                    Log.d(TAG, "Last Latitude "+lastLatitude);
-                    Log.d(TAG, "Last Longitude "+lastLongitude);
+                    preferences.setLastLatitude(String.valueOf(lastLatitude));
+                    preferences.setLastLongitude(String.valueOf(lastLongitude));
+
                 }
 
                 @Override
