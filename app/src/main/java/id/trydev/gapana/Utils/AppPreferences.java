@@ -8,6 +8,8 @@ public class AppPreferences {
 
     private static final String FIRST_RUN = "first_run";
 
+    private static final String TOGLE_NOTIF = "togle_notif";
+
     private final SharedPreferences prefs;
 
     public AppPreferences(Context context){
@@ -24,6 +26,20 @@ public class AppPreferences {
     public int getFirstRun(){
         return prefs.getInt(FIRST_RUN,0);
     }
+
+    //------------------------------------------------------------------------
+    public void setTogleNotif(int togle_notif){
+        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putString(FIRST_RUN, token);
+        editor.putInt(TOGLE_NOTIF, togle_notif);
+        editor.apply();
+    }
+
+    public int getTogleNotif(){
+        return prefs.getInt(TOGLE_NOTIF,0);
+    }
+
+    //-----------------------------------------------------------
 
     public void resetPreference(){
         SharedPreferences.Editor editor = prefs.edit();
