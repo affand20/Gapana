@@ -1,26 +1,41 @@
 package id.trydev.gapana.Edukasi.EdukasiPra.Model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.List;
 
+@Entity
 public class EdukasiPra implements Serializable {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
-    private String kategori;
-    private String konten;
-    private List<String> listGambar;
+    @ColumnInfo(name = "judul")
     private String judul;
+    @ColumnInfo(name = "kategori")
+    private String kategori;
+    @ColumnInfo(name = "konten")
+    private String konten;
+    @ColumnInfo(name = "listGambar")
+    private String listGambar;
+    @ColumnInfo(name = "warnaBg")
+    private String warnaBg;
 
-    public EdukasiPra(String kategori, String konten, List<String> listGambar, String judul) {
+    public EdukasiPra(){};
+
+    public EdukasiPra(int id, String judul, String kategori, String konten, String listGambar, String warnaBg) {
+        this.id = id;
+        this.judul = judul;
         this.kategori = kategori;
         this.konten = konten;
         this.listGambar = listGambar;
-        this.judul = judul;
+        this.warnaBg = warnaBg;
     }
-
-    public EdukasiPra(){}
 
     public int getId() {
         return id;
@@ -28,6 +43,14 @@ public class EdukasiPra implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getJudul() {
+        return judul;
+    }
+
+    public void setJudul(String judul) {
+        this.judul = judul;
     }
 
     public String getKategori() {
@@ -46,19 +69,19 @@ public class EdukasiPra implements Serializable {
         this.konten = konten;
     }
 
-    public List<String> getListGambar() {
+    public String getListGambar() {
         return listGambar;
     }
 
-    public void setListGambar(List<String> listGambar) {
+    public void setListGambar(String listGambar) {
         this.listGambar = listGambar;
     }
 
-    public String getJudul() {
-        return judul;
+    public String getWarnaBg() {
+        return warnaBg;
     }
 
-    public void setJudul(String judul) {
-        this.judul = judul;
+    public void setWarnaBg(String warnaBg) {
+        this.warnaBg = warnaBg;
     }
 }

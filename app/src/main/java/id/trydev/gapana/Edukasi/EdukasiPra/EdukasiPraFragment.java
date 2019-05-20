@@ -45,8 +45,6 @@ public class EdukasiPraFragment extends Fragment implements EdukasiPraView{
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Toast.makeText(getActivity(), "TOAST!!!!!!!", Toast.LENGTH_SHORT).show();
-
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
         rvEdukasiPra = view.findViewById(R.id.rv_edukasi_pra);
         emptyText = view.findViewById(R.id.empty_text);

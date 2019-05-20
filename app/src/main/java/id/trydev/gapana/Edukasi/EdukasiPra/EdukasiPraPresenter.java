@@ -5,6 +5,8 @@ import java.util.List;
 
 import id.trydev.gapana.Edukasi.EdukasiPra.Model.EdukasiPra;
 
+import static id.trydev.gapana.Base.MainActivity.db;
+
 public class EdukasiPraPresenter {
 
     private List<EdukasiPra> listKontenEdukasiPra = new ArrayList<>();
@@ -19,10 +21,11 @@ public class EdukasiPraPresenter {
 //        getDataFromServer();
         view.showLoading();
         listGambar.add("R.drawable.dummy_image");
-        for (int i = 0; i < 5; i++) {
-            EdukasiPra edukasi = new EdukasiPra("Gempa","Anda harus berlindung",listGambar,"Tips berlindung dari gempa");
-            listKontenEdukasiPra.add(edukasi);
-        }
+//        for (int i = 0; i < 5; i++) {
+//            EdukasiPra edukasi = new EdukasiPra("Gempa","Anda harus berlindung",listGambar,"Tips berlindung dari gempa");
+//            listKontenEdukasiPra.add(edukasi);
+//        }
+        listKontenEdukasiPra = db.edukasiPraDao().getAll();
         view.hideLoading();
         view.showData(listKontenEdukasiPra);
     }
