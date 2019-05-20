@@ -18,6 +18,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity
         }
 
         Mapbox.getInstance(this, BuildConfig.TOKEN);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("bencana");
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
