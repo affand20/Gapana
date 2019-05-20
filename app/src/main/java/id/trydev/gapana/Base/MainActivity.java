@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity
                 edukasiPra.setKategori(lineSplitter[2]);
                 edukasiPra.setKonten(lineSplitter[3]);
                 edukasiPra.setListGambar(lineSplitter[4]);
+                edukasiPra.setWarnaBg(lineSplitter[5]);
                 db.edukasiPraDao().insert(edukasiPra);
             }
             preferences.setFirstRun(1);
