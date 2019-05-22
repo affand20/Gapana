@@ -29,7 +29,7 @@ public class DetailEdukasiPraActivity extends AppCompatActivity  {
         }
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setTitle(edukasiPra.getJudul());
+        getSupportActionBar().setTitle(edukasiPra.getJudul());
 
         stepperlayout= findViewById(R.id.stepperLayout);
         stepperlayout.setAdapter(new StepperAdapter(getSupportFragmentManager(),this, edukasiPra));
