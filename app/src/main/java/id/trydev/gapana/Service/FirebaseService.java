@@ -54,6 +54,7 @@ public class FirebaseService extends FirebaseMessagingService {
                 startActivity(
                         new Intent(this, NotifikasiActivity.class)
                                 .putExtra("magnitude", remoteMessage.getData().get("magnitude"))
+                                .putExtra("type", remoteMessage.getData().get("type"))
                                 .putExtra("info", remoteMessage.getData().get("loc")));
             } else{
                 sendNotification("Informasi Bencana", "Telah terjadi gempa "+remoteMessage.getData().get("magnitude")+" SR "+remoteMessage.getData().get("loc"));

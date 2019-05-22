@@ -28,6 +28,13 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import static com.mapbox.api.directions.v5.DirectionsCriteria.GEOMETRY_POLYLINE;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -77,6 +84,7 @@ import id.trydev.gapana.Base.MainActivity;
 import id.trydev.gapana.BuildConfig;
 import id.trydev.gapana.Cuaca.CuacaPresenter;
 import id.trydev.gapana.Cuaca.CuacaView;
+import id.trydev.gapana.Posko.Model.LatLong;
 import id.trydev.gapana.Posko.Model.NomorPenting;
 import id.trydev.gapana.R;
 import id.trydev.gapana.Utils.ItemClickSupport;
@@ -125,7 +133,10 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
     private static final String DRIVING_ROUTE_POLYLINE_SOURCE_ID = "DRIVING_ROUTE_POLYLINE_SOURCE_ID";
     private static final int DRAW_SPEED_MILLISECONDS = 500;
 
+    private List<Feature> markerCoordinates = new ArrayList<>();
+
     private NomorPenting nomorPenting;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     @Nullable
     @Override
@@ -152,7 +163,7 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
             public void onClick(View view) {
                 mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
                         new LatLng(lastLatitude,lastLongitude),12
-                ),5000);
+                ),3000);
             }
         });
 
@@ -245,6 +256,7 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
     public boolean onMapClick(@NonNull LatLng point) {
         Log.d(TAG, "Last Latitude onClick "+lastLatitude);
         Log.d(TAG, "Last Longitude onClick "+lastLongitude);
+
         getDirectionRoute(Point.fromLngLat(lastLongitude, lastLatitude), Point.fromLngLat(point.getLongitude(), point.getLatitude()));
         return false;
     }
@@ -334,35 +346,62 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
 
-                List<Feature> markerCoordinates = new ArrayList<>();
-                markerCoordinates.add(Feature.fromGeometry(
-                        Point.fromLngLat(112.729967,-7.287692 )));
-                markerCoordinates.add(Feature.fromGeometry(
-                        Point.fromLngLat(112.728317,-7.296143 )));
-                markerCoordinates.add(Feature.fromGeometry(
-                        Point.fromLngLat(112.730536,-7.287010 )));
-
-                style.addSource(new GeoJsonSource("marker-source",
-                        FeatureCollection.fromFeatures(markerCoordinates)));
+                firestore.collection("posko")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()){
+                                    for (QueryDocumentSnapshot document: task.getResult()){
+                                        LatLong latlng = document.toObject(LatLong.class);
+                                        if (getArguments()!=null && getArguments().getString("type")!=null){
+                                            if (getArguments().getString("type").equals(latlng.getType())){
+                                                markerCoordinates.add(Feature.fromGeometry(
+                                                        Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude())
+                                                ));
+                                            }
+                                        } else{
+                                            markerCoordinates.add(Feature.fromGeometry(
+                                                    Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude())
+                                            ));
+                                        }
+                                    }
+                                    Log.d(TAG, "onComplete: "+markerCoordinates.size()+", "+markerCoordinates.get(0));
+                                    style.addSource(new GeoJsonSource("marker-source",
+                                            FeatureCollection.fromFeatures(markerCoordinates)));
 
 // Add the marker image to map
-                style.addImage("my-marker-image", BitmapFactory.decodeResource(
-                        getActivity().getResources(), R.drawable.mapbox_marker_icon_default));
+                                    style.addImage("my-marker-image", BitmapFactory.decodeResource(
+                                            getActivity().getResources(), R.drawable.mapbox_marker_icon_default));
 
 // Adding an offset so that the bottom of the blue icon gets fixed to the coordinate, rather than the
 // middle of the icon being fixed to the coordinate point.
-                style.addLayer(new SymbolLayer("marker-layer", "marker-source")
-                        .withProperties(PropertyFactory.iconImage("my-marker-image"),
-                                iconOffset(new Float[]{0f, -9f})));
+                                    style.addLayer(new SymbolLayer("marker-layer", "marker-source")
+                                            .withProperties(PropertyFactory.iconImage("my-marker-image"),
+                                                    iconOffset(new Float[]{0f, -9f})));
 
 // Add the selected marker source and layer
-                style.addSource(new GeoJsonSource("selected-marker"));
+                                    style.addSource(new GeoJsonSource("selected-marker"));
 
 // Adding an offset so that the bottom of the blue icon gets fixed to the coordinate, rather than the
 // middle of the icon being fixed to the coordinate point.
-                style.addLayer(new SymbolLayer("selected-marker-layer", "selected-marker")
-                        .withProperties(PropertyFactory.iconImage("my-marker-image"),
-                                iconOffset(new Float[]{0f, -9f})));
+                                    style.addLayer(new SymbolLayer("selected-marker-layer", "selected-marker")
+                                            .withProperties(PropertyFactory.iconImage("my-marker-image"),
+                                                    iconOffset(new Float[]{0f, -9f})));
+                                } else{
+                                    Toast.makeText(getActivity(), task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+//                markerCoordinates.add(Feature.fromGeometry(
+//                        Point.fromLngLat(112.729967,-7.287692 )));
+//                markerCoordinates.add(Feature.fromGeometry(
+//                        Point.fromLngLat(112.728317,-7.296143 )));
+//                markerCoordinates.add(Feature.fromGeometry(
+//                        Point.fromLngLat(112.730536,-7.287010 )));
+
+
 
                 style.addSource(new GeoJsonSource(DRIVING_ROUTE_POLYLINE_SOURCE_ID));
                 style.addLayerBelow(new LineLayer(DRIVING_ROUTE_POLYLINE_LINE_LAYER_ID, DRIVING_ROUTE_POLYLINE_SOURCE_ID)

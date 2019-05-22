@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.gms.location.LocationListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity
 
     public static AppDatabase db;
     public static AppPreferences preferences;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 //    public static LocationManager lm;
 
     @Override
@@ -105,7 +107,11 @@ public class MainActivity extends AppCompatActivity
 
         if (getIntent().getStringExtra("redirect")!=null){
             getSupportActionBar().setTitle("Posko Evakuasi");
-            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new PoskoFragment()).commit();
+            Bundle bundle = new Bundle();
+            bundle.putString("type", getIntent().getStringExtra("type"));
+            PoskoFragment fragment = new PoskoFragment();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
         } else{
             getSupportActionBar().setTitle("Beranda");
             getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CuacaFragment()).commit();

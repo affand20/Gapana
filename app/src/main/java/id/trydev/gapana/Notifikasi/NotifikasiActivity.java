@@ -26,6 +26,7 @@ public class NotifikasiActivity extends AppCompatActivity {
 
         String info = getIntent().getStringExtra("info");
         String magnitude = getIntent().getStringExtra("magnitude");
+        String type = getIntent().getStringExtra("type");
 
         infoBencana.setText(String.format(getResources().getString(R.string.info_gempa),magnitude,info));
 
@@ -34,6 +35,7 @@ public class NotifikasiActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(NotifikasiActivity.this, MainActivity.class);
                 intent.putExtra("redirect", "posko");
+                intent.putExtra("type", type);
                 startActivity(intent);
             }
         });
