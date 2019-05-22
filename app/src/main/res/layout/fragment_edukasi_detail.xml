@@ -13,7 +13,7 @@
         android:src="@drawable/gempa_1"
         android:layout_height="250dp" />
     <TextView
-        android:text="Anda harus berlari !!"
+
         android:layout_below="@id/gambar_panduan"
         android:id="@+id/panduan_text"
         android:layout_centerHorizontal="true"
