@@ -1,11 +1,15 @@
 package id.trydev.gapana.Edukasi.EdukasiPra.Detail;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.stepstone.stepper.BlockingStep;
 import com.stepstone.stepper.StepperLayout;
@@ -15,9 +19,20 @@ import id.trydev.gapana.R;
 
 public class StepFragment extends Fragment implements BlockingStep {
 
+    Bundle bundle;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_detail_edukasi_pra, container, false);
+        View v = inflater.inflate(R.layout.fragment_edukasi_detail, container, false);
+
+        RelativeLayout background = v.findViewById(R.id.background);
+        ImageView gambarPanduan = v.findViewById(R.id.gambar_panduan);
+        TextView panduanText = v.findViewById(R.id.panduan_text);
+
+        bundle = this.getArguments();
+
+        gambarPanduan.setImageResource(v.getContext().getResources().getIdentifier(bundle.getString("gambar"), "drawable", v.getContext().getPackageName()));
+        background.setBackgroundColor(Color.parseColor(bundle.getString("warna")));
 
         //initialize your UI
 

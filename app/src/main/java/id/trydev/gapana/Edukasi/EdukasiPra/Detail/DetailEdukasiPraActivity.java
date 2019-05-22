@@ -24,15 +24,15 @@ public class DetailEdukasiPraActivity extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_edukasi_pra);
 
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         if (getIntent().getSerializableExtra("edukasi_pra")!=null){
             edukasiPra = (EdukasiPra) getIntent().getSerializableExtra("edukasi_pra");
         }
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setTitle(edukasiPra.getJudul());
+
         stepperlayout= findViewById(R.id.stepperLayout);
-        stepperlayout.setAdapter(new StepperAdapter(getSupportFragmentManager(),this));
+        stepperlayout.setAdapter(new StepperAdapter(getSupportFragmentManager(),this, edukasiPra));
         stepperlayout.setListener(new StepperLayout.StepperListener() {
             @Override
             public void onCompleted(View completeButton) {

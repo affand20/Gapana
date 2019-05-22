@@ -23,17 +23,19 @@ public class EdukasiPra implements Serializable {
     private String konten;
     @ColumnInfo(name = "listGambar")
     private String listGambar;
+    @ColumnInfo(name = "warnaBg")
+    private String warnaBg;
 
+    public EdukasiPra(){};
 
-    public EdukasiPra(String kategori, String konten, String listGambar, String judul) {
+    public EdukasiPra(int id, String judul, String kategori, String konten, String listGambar, String warnaBg) {
+        this.id = id;
+        this.judul = judul;
         this.kategori = kategori;
         this.konten = konten;
         this.listGambar = listGambar;
-        this.judul = judul;
+        this.warnaBg = warnaBg;
     }
-
-    @Ignore
-    public EdukasiPra(){}
 
     public int getId() {
         return id;
@@ -41,6 +43,14 @@ public class EdukasiPra implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getJudul() {
+        return judul;
+    }
+
+    public void setJudul(String judul) {
+        this.judul = judul;
     }
 
     public String getKategori() {
@@ -67,11 +77,11 @@ public class EdukasiPra implements Serializable {
         this.listGambar = listGambar;
     }
 
-    public String getJudul() {
-        return judul;
+    public String getWarnaBg() {
+        return warnaBg;
     }
 
-    public void setJudul(String judul) {
-        this.judul = judul;
+    public void setWarnaBg(String warnaBg) {
+        this.warnaBg = warnaBg;
     }
 }
