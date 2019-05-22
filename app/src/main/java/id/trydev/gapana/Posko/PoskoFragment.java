@@ -1,23 +1,40 @@
 package id.trydev.gapana.Posko;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.Toast;
 import static com.mapbox.api.directions.v5.DirectionsCriteria.GEOMETRY_POLYLINE;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineProvider;
@@ -34,6 +51,7 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
@@ -66,7 +84,10 @@ import id.trydev.gapana.Base.MainActivity;
 import id.trydev.gapana.BuildConfig;
 import id.trydev.gapana.Cuaca.CuacaPresenter;
 import id.trydev.gapana.Cuaca.CuacaView;
+import id.trydev.gapana.Posko.Model.LatLong;
+import id.trydev.gapana.Posko.Model.NomorPenting;
 import id.trydev.gapana.R;
+import id.trydev.gapana.Utils.ItemClickSupport;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -82,6 +103,8 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineOpacity;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
+import static id.trydev.gapana.Base.MainActivity.db;
+import static id.trydev.gapana.Base.MainActivity.preferences;
 
 public class PoskoFragment extends Fragment implements OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
 
@@ -97,7 +120,10 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
     private MapboxDirections mapboxDirectionsClient;
     private Handler handler = new Handler();
     private Runnable runnable;
+    private FloatingActionButton lokasiTerkini, teleponDarurat;
 
+    private PoskoAdapter adapter;
+    private List<NomorPenting> listNomorPenting = new ArrayList<>();
 
     private double lastLatitude, lastLongitude;
 
@@ -106,6 +132,11 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
     private static final String DRIVING_ROUTE_POLYLINE_LINE_LAYER_ID = "DRIVING_ROUTE_POLYLINE_LINE_LAYER_ID";
     private static final String DRIVING_ROUTE_POLYLINE_SOURCE_ID = "DRIVING_ROUTE_POLYLINE_SOURCE_ID";
     private static final int DRAW_SPEED_MILLISECONDS = 500;
+
+    private List<Feature> markerCoordinates = new ArrayList<>();
+
+    private NomorPenting nomorPenting;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
 
     @Nullable
     @Override
@@ -124,6 +155,61 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
 
         mapView.getMapAsync(this);
 
+        lokasiTerkini = view.findViewById(R.id.btn_lokasi_terkini);
+        teleponDarurat = view.findViewById(R.id.btn_telepon);
+
+        lokasiTerkini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mapboxMap.animateCamera(CameraUpdateFactory.newLatLngZoom(
+                        new LatLng(lastLatitude,lastLongitude),12
+                ),3000);
+            }
+        });
+
+        teleponDarurat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Dialog dialog = new Dialog(getActivity());
+                dialog.setContentView(R.layout.layout_dialog_telepon_penting);
+
+                RecyclerView rvNomorPenting = dialog.findViewById(R.id.list_nomor_penting);
+                rvNomorPenting.setLayoutManager(new LinearLayoutManager(getActivity()));
+                listNomorPenting = db.nomorPentingDao().getAll();
+                adapter = new PoskoAdapter(listNomorPenting);
+                rvNomorPenting.setAdapter(adapter);
+
+                ItemClickSupport.addTo(rvNomorPenting).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+                    @Override
+                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+
+                        nomorPenting = listNomorPenting.get(position);
+
+                        if (Build.VERSION.SDK_INT > 22){
+                            if (ContextCompat.checkSelfPermission(getActivity().getApplicationContext(), Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                                startActivity(new Intent(
+                                        Intent.ACTION_CALL, Uri.parse("tel:"+nomorPenting.getNomor())
+                                ));
+                            } else{
+                                ActivityCompat.requestPermissions(
+                                        getActivity(),
+                                        new String[]{Manifest.permission.CALL_PHONE},
+                                        100);
+                            }
+                        } else{
+                            startActivity(new Intent(
+                                    Intent.ACTION_CALL, Uri.parse("tel:"+nomorPenting.getNomor())
+                            ));
+                        }
+
+
+                    }
+                });
+
+                dialog.show();
+            }
+        });
+
         locationEngine = LocationEngineProvider.getBestLocationEngine(getActivity());
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},101);
@@ -135,10 +221,9 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
                     Location lastLocation = result.getLastLocation();
                     lastLatitude = lastLocation.getLatitude();
                     lastLongitude = lastLocation.getLongitude();
-//                    Toast.makeText(context, "Updating lat long", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "Updating lat long");
-                    Log.d(TAG, "Last Latitude "+lastLatitude);
-                    Log.d(TAG, "Last Longitude "+lastLongitude);
+                    preferences.setLastLatitude(String.valueOf(lastLatitude));
+                    preferences.setLastLongitude(String.valueOf(lastLongitude));
+
                 }
 
                 @Override
@@ -171,6 +256,7 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
     public boolean onMapClick(@NonNull LatLng point) {
         Log.d(TAG, "Last Latitude onClick "+lastLatitude);
         Log.d(TAG, "Last Longitude onClick "+lastLongitude);
+
         getDirectionRoute(Point.fromLngLat(lastLongitude, lastLatitude), Point.fromLngLat(point.getLongitude(), point.getLatitude()));
         return false;
     }
@@ -260,35 +346,62 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
 
-                List<Feature> markerCoordinates = new ArrayList<>();
-                markerCoordinates.add(Feature.fromGeometry(
-                        Point.fromLngLat(112.729967,-7.287692 )));
-                markerCoordinates.add(Feature.fromGeometry(
-                        Point.fromLngLat(112.728317,-7.296143 )));
-                markerCoordinates.add(Feature.fromGeometry(
-                        Point.fromLngLat(112.730536,-7.287010 )));
-
-                style.addSource(new GeoJsonSource("marker-source",
-                        FeatureCollection.fromFeatures(markerCoordinates)));
+                firestore.collection("posko")
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if (task.isSuccessful()){
+                                    for (QueryDocumentSnapshot document: task.getResult()){
+                                        LatLong latlng = document.toObject(LatLong.class);
+                                        if (getArguments()!=null && getArguments().getString("type")!=null){
+                                            if (getArguments().getString("type").equals(latlng.getType())){
+                                                markerCoordinates.add(Feature.fromGeometry(
+                                                        Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude())
+                                                ));
+                                            }
+                                        } else{
+                                            markerCoordinates.add(Feature.fromGeometry(
+                                                    Point.fromLngLat(latlng.getLongitude(), latlng.getLatitude())
+                                            ));
+                                        }
+                                    }
+                                    Log.d(TAG, "onComplete: "+markerCoordinates.size()+", "+markerCoordinates.get(0));
+                                    style.addSource(new GeoJsonSource("marker-source",
+                                            FeatureCollection.fromFeatures(markerCoordinates)));
 
 // Add the marker image to map
-                style.addImage("my-marker-image", BitmapFactory.decodeResource(
-                        getActivity().getResources(), R.drawable.mapbox_marker_icon_default));
+                                    style.addImage("my-marker-image", BitmapFactory.decodeResource(
+                                            getActivity().getResources(), R.drawable.mapbox_marker_icon_default));
 
 // Adding an offset so that the bottom of the blue icon gets fixed to the coordinate, rather than the
 // middle of the icon being fixed to the coordinate point.
-                style.addLayer(new SymbolLayer("marker-layer", "marker-source")
-                        .withProperties(PropertyFactory.iconImage("my-marker-image"),
-                                iconOffset(new Float[]{0f, -9f})));
+                                    style.addLayer(new SymbolLayer("marker-layer", "marker-source")
+                                            .withProperties(PropertyFactory.iconImage("my-marker-image"),
+                                                    iconOffset(new Float[]{0f, -9f})));
 
 // Add the selected marker source and layer
-                style.addSource(new GeoJsonSource("selected-marker"));
+                                    style.addSource(new GeoJsonSource("selected-marker"));
 
 // Adding an offset so that the bottom of the blue icon gets fixed to the coordinate, rather than the
 // middle of the icon being fixed to the coordinate point.
-                style.addLayer(new SymbolLayer("selected-marker-layer", "selected-marker")
-                        .withProperties(PropertyFactory.iconImage("my-marker-image"),
-                                iconOffset(new Float[]{0f, -9f})));
+                                    style.addLayer(new SymbolLayer("selected-marker-layer", "selected-marker")
+                                            .withProperties(PropertyFactory.iconImage("my-marker-image"),
+                                                    iconOffset(new Float[]{0f, -9f})));
+                                } else{
+                                    Toast.makeText(getActivity(), task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+//                markerCoordinates.add(Feature.fromGeometry(
+//                        Point.fromLngLat(112.729967,-7.287692 )));
+//                markerCoordinates.add(Feature.fromGeometry(
+//                        Point.fromLngLat(112.728317,-7.296143 )));
+//                markerCoordinates.add(Feature.fromGeometry(
+//                        Point.fromLngLat(112.730536,-7.287010 )));
+
+
 
                 style.addSource(new GeoJsonSource(DRIVING_ROUTE_POLYLINE_SOURCE_ID));
                 style.addLayerBelow(new LineLayer(DRIVING_ROUTE_POLYLINE_LINE_LAYER_ID, DRIVING_ROUTE_POLYLINE_SOURCE_ID)
@@ -393,6 +506,13 @@ public class PoskoFragment extends Fragment implements OnMapReadyCallback, Mapbo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode==100){
+            if (grantResults!=null && grantResults[0]==PackageManager.PERMISSION_GRANTED){
+                startActivity(new Intent(
+                        Intent.ACTION_CALL, Uri.parse("tel:"+nomorPenting.getNomor())
+                ));
+            }
+        }
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:padding="16dp">
+    <TextView
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:layout_width="wrap_content"
+        android:id="@+id/nama"
+        android:text="SAR - SURABAYA"
+        android:textColor="@android:color/black"
+        android:layout_height="wrap_content" />
+    <TextView
+        android:textStyle="bold"
+        android:id="@+id/nomor"
+        android:layout_below="@id/nama"
+        android:text="(031) 8666611"
+        android:layout_marginTop="8dp"
+        android:textColor="@android:color/black"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</RelativeLayout>

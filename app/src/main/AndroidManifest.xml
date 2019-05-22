@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission. ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/logo"
@@ -14,13 +14,15 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Pengaturan.PanduanActivity"></activity>
+
+        <activity android:name=".Pengaturan.PanduanActivity" />
         <activity android:name=".Pengaturan.TentangActivity" />
         <activity android:name=".Edukasi.EdukasiPra.Detail.DetailEdukasiPraActivity" />
+
         <receiver
             android:name=".Notifikasi.BencanaReceiver"
             android:enabled="true"
-            android:exported="true"></receiver>
+            android:exported="true" />
 
         <activity
             android:name=".Notifikasi.NotifikasiActivity"
@@ -50,7 +52,6 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_marker_24dp" />
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />

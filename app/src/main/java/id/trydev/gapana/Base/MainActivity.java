@@ -1,9 +1,16 @@
 package id.trydev.gapana.Base;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
+import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,6 +25,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.location.LocationListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -37,6 +46,7 @@ import id.trydev.gapana.Cuaca.CuacaFragment;
 import id.trydev.gapana.Edukasi.EdukasiFragment;
 import id.trydev.gapana.Edukasi.EdukasiPra.Model.EdukasiPra;
 import id.trydev.gapana.Pengaturan.PengaturanActivity;
+import id.trydev.gapana.Posko.Model.NomorPenting;
 import id.trydev.gapana.Posko.PoskoFragment;
 import id.trydev.gapana.R;
 import id.trydev.gapana.Utils.AppDatabase;
@@ -50,6 +60,8 @@ public class MainActivity extends AppCompatActivity
 
     public static AppDatabase db;
     public static AppPreferences preferences;
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+//    public static LocationManager lm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +71,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "edukasipra")
+                AppDatabase.class, "gapana")
                 .allowMainThreadQueries()
                 .build();
 
@@ -68,12 +80,16 @@ public class MainActivity extends AppCompatActivity
                 .addNetworkInterceptor(new StethoInterceptor())
                 .build();
 
-        preferences = new AppPreferences(this);
+        createNotificationChannel();
 
-        Log.d("PREFERENCES", "is First Run : "+preferences.getFirstRun());
+        preferences = new AppPreferences(this);
+//        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if (preferences.getFirstRun()==0){
             importDb();
+            importDbNomorTelepon();
+
+            preferences.setFirstRun(1);
         }
 
         Mapbox.getInstance(this, BuildConfig.TOKEN);
@@ -89,10 +105,32 @@ public class MainActivity extends AppCompatActivity
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        getSupportActionBar().setTitle("Beranda");
-        getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CuacaFragment()).commit();
+        if (getIntent().getStringExtra("redirect")!=null){
+            getSupportActionBar().setTitle("Posko Evakuasi");
+            Bundle bundle = new Bundle();
+            bundle.putString("type", getIntent().getStringExtra("type"));
+            PoskoFragment fragment = new PoskoFragment();
+            fragment.setArguments(bundle);
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, fragment).commit();
+        } else{
+            getSupportActionBar().setTitle("Beranda");
+            getSupportFragmentManager().beginTransaction().replace(R.id.frame_layout, new CuacaFragment()).commit();
+        }
         navigationView.setCheckedItem(R.id.beranda);
 
+    }
+
+    private void createNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            CharSequence name = getString(R.string.ch_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(getResources().getString(R.string.channel_id), name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void importDb() {
@@ -115,9 +153,29 @@ public class MainActivity extends AppCompatActivity
                 edukasiPra.setWarnaBg(lineSplitter[5]);
                 db.edukasiPraDao().insert(edukasiPra);
             }
-            preferences.setFirstRun(1);
-            Log.d("PREFERENCES", "is First Run : "+preferences.getFirstRun());
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void importDbNomorTelepon(){
+        try {
+            InputStreamReader is = new InputStreamReader(getApplicationContext()
+                    .getAssets()
+                    .open("nomortelepon.csv"));
+            BufferedReader reader = new BufferedReader(is);
+            reader.readLine();
+            String line = "";
+            while ((line = reader.readLine()) != null){
+                String lineSplitter[] = line.split(",");
+                Log.d("ROOM DATABASE", lineSplitter[0]+" "+lineSplitter[1]+" "+lineSplitter[2]);
+                NomorPenting nomorPenting = new NomorPenting();
+                nomorPenting.setId(Integer.parseInt(lineSplitter[0]));
+                nomorPenting.setNama(lineSplitter[1]);
+                nomorPenting.setNomor(lineSplitter[2]);
+                db.nomorPentingDao().inserAll(nomorPenting);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

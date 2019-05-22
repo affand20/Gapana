@@ -7,6 +7,8 @@ public class AppPreferences {
     public static final String PREFS_NAME = "app_pref";
 
     private static final String FIRST_RUN = "first_run";
+    private static final String LAST_LATITUDE = "last_latitude";
+    private static final String LAST_LONGITUDE = "last_longitude";
 
     private static final String TOGLE_NOTIF = "togle_notif";
 
@@ -40,6 +42,26 @@ public class AppPreferences {
     }
 
     //-----------------------------------------------------------
+
+    public void setLastLatitude(String latitude){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(LAST_LATITUDE, latitude);
+        editor.apply();
+    }
+
+    public Double getLastLatitude(){
+        return Double.parseDouble(prefs.getString(LAST_LATITUDE, null));
+    }
+
+    public void setLastLongitude(String longitude){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(LAST_LONGITUDE, longitude);
+        editor.apply();
+    }
+
+    public Double getLastLongitude(){
+        return Double.parseDouble(prefs.getString(LAST_LONGITUDE, null));
+    }
 
     public void resetPreference(){
         SharedPreferences.Editor editor = prefs.edit();
