@@ -38,8 +38,9 @@ dependencies {
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:7.2.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation:0.33.2'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-core:1.2.0'
-
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-offline-v7:0.5.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.33.2'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-plugin-locationlayer:0.6.0'
 
     // google play service
     implementation 'com.google.android.gms:play-services-location:16.0.0'
@@ -54,8 +55,25 @@ dependencies {
 
     // firebase
     implementation 'com.google.firebase:firebase-core:16.0.8'
+    implementation 'com.google.firebase:firebase-messaging:17.6.0'
 
     // chrome custom tabs
     implementation 'com.android.support:customtabs:28.0.0'
+
+    // RETROFIT
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.10.0'
+
+    //stepstone
+    implementation 'com.stepstone.stepper:material-stepper:4.3.1'
+
+    // room db
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+
+    // for stetho
+    implementation 'com.facebook.stetho:stetho:1.5.0'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.5.0'
 
 }

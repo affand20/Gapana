@@ -19,6 +19,8 @@ import id.trydev.gapana.R;
 
 public class EdukasiFragment extends Fragment {
 
+
+
     private TabLayout tabLayout;
     private ViewPager viewPager;
 
@@ -36,6 +38,8 @@ public class EdukasiFragment extends Fragment {
 
         tabLayout = view.findViewById(R.id.tabs);
         viewPager = view.findViewById(R.id.viewpager);
+
+
 
         viewPager.setAdapter(new TabAdapter(getChildFragmentManager()));
         tabLayout.post(new Runnable() {
