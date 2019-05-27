@@ -1,6 +1,7 @@
 package id.trydev.gapana.Pengaturan;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -26,7 +27,7 @@ public class PengaturanActivity extends AppCompatActivity {
         faqBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent= new Intent(getBaseContext(), PanduanActivity.class);
+                Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse("https://sites.google.com/view/panduangapana"));
                 startActivity(intent);
             }
         });
