@@ -4,22 +4,25 @@
     android:layout_margin="8dp"
     android:layout_width="match_parent"
     app:cardElevation="4dp"
-    app:cardCornerRadius="4dp"
+    app:cardCornerRadius="2dp"
     android:layout_height="wrap_content">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="175dp"
             android:id="@+id/thumbnail"
             android:src="@color/colorAccent"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/judul_video"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/black"
             android:text="Video Healing Pasca Bencana"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:layout_below="@id/thumbnail"
             android:layout_margin="16dp"/>
     </RelativeLayout>

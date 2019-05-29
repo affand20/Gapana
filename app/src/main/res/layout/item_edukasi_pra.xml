@@ -11,7 +11,7 @@
     android:layout_marginLeft="8dp"
     android:id="@+id/card"
     app:cardElevation="4dp"
-    app:cardCornerRadius="4dp">
+    app:cardCornerRadius="2dp">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -19,7 +19,7 @@
             android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="175dp"
             android:id="@+id/berita"/>
         <TextView
             android:layout_width="match_parent"
@@ -27,7 +27,8 @@
             android:layout_below="@id/berita"
             android:layout_marginTop="16dp"
             android:text="Judul"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/black"
             android:textStyle="bold"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -38,8 +39,7 @@
             android:layout_below="@+id/judul"
             android:id="@+id/kategori"
             android:text="kategori"
-            android:textSize="19sp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="4dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"/>
     </RelativeLayout>
