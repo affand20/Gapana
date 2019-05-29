@@ -1,0 +1,47 @@
+package id.trydev.gapana.Edukasi.EdukasiPasca;
+
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import id.trydev.gapana.Edukasi.EdukasiPasca.Model.EdukasiPasca;
+
+public class EdukasiPascaPresenter {
+
+    private EdukasiPascaView view;
+    private List<EdukasiPasca> listVideo = new ArrayList<>();
+    private FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+
+    public EdukasiPascaPresenter(EdukasiPascaView view){
+        this.view = view;
+    }
+
+    void getListVideo(){
+        view.showLoading();
+        firestore.collection("edukasi-pasca")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()){
+                            for (QueryDocumentSnapshot document : task.getResult()){
+                                EdukasiPasca edukasiPasca = document.toObject(EdukasiPasca.class);
+                                listVideo.add(edukasiPasca);
+                            }
+                            view.hideLoading();
+                            view.populateData(listVideo);
+                        } else{
+                            view.hideLoading();
+                            view.sendToast(task.getException().getLocalizedMessage());
+                        }
+                    }
+                });
+    }
+}
