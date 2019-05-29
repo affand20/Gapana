@@ -57,6 +57,10 @@ public class CuacaPresenter {
         });
     }
 
+    void getDataCuaca(){
+
+    }
+
     private void enableComponent(Style style) {
         if (PermissionsManager.areLocationPermissionsGranted(context)){
             

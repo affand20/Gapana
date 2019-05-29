@@ -1,6 +1,8 @@
 package id.trydev.gapana.Cuaca;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -11,6 +13,10 @@ import android.widget.Toast;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
@@ -18,8 +24,11 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+
+import java.util.ArrayList;
 import java.util.List;
 import id.trydev.gapana.Base.MainActivity;
+import id.trydev.gapana.Cuaca.Modal.Cuaca;
 import id.trydev.gapana.R;
 
 public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
@@ -69,6 +78,26 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
             @Override
             public void onStyleLoaded(@NonNull Style style) {
                 enableLocationComponent(style);
+            }
+        });
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_cloud_queue_black_24dp);
+
+        IconFactory iconFactory = IconFactory.getInstance(getContext());
+        Icon icon = iconFactory.fromResource(R.drawable.cloud);
+
+        this.mapboxMap.addMarker(
+          new MarkerOptions()
+                .position(new LatLng(-7.257472, 112.752090))
+                .icon(icon)
+                .title("surabaya")
+        );
+
+        mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(@NonNull Marker marker) {
+
+                Toast.makeText(context, marker.getTitle(), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
     }
@@ -151,4 +180,23 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
         mapView.onSaveInstanceState(outState);
     }
 
+    @Override
+    public void showLoading() {
+
+    }
+
+    @Override
+    public void dismissLoading() {
+
+    }
+
+    @Override
+    public void showData(ArrayList<Cuaca> list) {
+
+    }
+
+    @Override
+    public void emptyData(String msg) {
+
+    }
 }
