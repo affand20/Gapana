@@ -18,4 +18,45 @@
         mapbox:mapbox_cameraTilt="0"
         mapbox:mapbox_cameraZoom="12" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:background="@drawable/berawan"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="20dp"
+        mapbox:layout_constraintBottom_toBottomOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Surabaya"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="15dp"
+            android:id="@+id/kota"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="28 - 34 C"
+            android:textColor="@android:color/white"
+            android:textSize="30sp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="15dp"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/derajat"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="BERAWAN"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="15dp"/>
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>
