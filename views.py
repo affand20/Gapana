@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
+from flask import Flask
 from google.cloud import firestore
 from flask.views import MethodView
 import json
-
+app = Flask(__name__)
 db  = firestore.Client()
 
 
