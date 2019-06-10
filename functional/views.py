@@ -45,7 +45,7 @@ class DetikScrap(MethodView):
     def get(self):
         url, title, photo_url, description, date = self.parsed_data()
         for counter in range(len(title)):
-            doc_ref = db.collection(u'news').document(u'detik').collection(u'detik_news_bencana_gempa'+str(counter)).document()
+            doc_ref = db.collection(u'news').document()
             doc_ref.set({
                 u'url': url[counter],
                 u'title': title[counter],
