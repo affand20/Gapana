@@ -63,6 +63,48 @@ class DetikScrap(MethodView):
         )
         return response
 
+class KompasScrap(MethodView):
+    def scrap_merdeka():
+        pass
+    
+    def get():
+        pass
+
+class MerdekaScrap(MethodView):
+    def scrap_merdeka(self):
+        pass
+    
+    def get(self):
+        pass
+
+class JatimnetScrap(MethodView):
+    def get_api(self):
+        pass
+        
+    def get_slug(self,data):
+        pass
+    
+    def set_url(self):
+        pass
+    
+    def get():
+        pass
+
+class SuaraSurabayaScrap(MethodView):
+    def scrap_ss(self):
+        pass
+    
+    def get(self):
+        pass 
+        
+class TirtoScrap(MethodView):
+    def scrap_tirto(self):
+        pass
+    
+    def get(self):
+        pass
+        
+
 
 # @app.route('/kompas')
 # def kompas_save():
