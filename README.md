@@ -14,5 +14,11 @@ featured:
 7. export your firebase json to env using command ```export GOOGLE_APPLICATION_CREDENTIALS=<your services.json>```
 8. all have ready and you can run with command ```python app.py```
 
+
+#documentation 
+1. run it 
+2. access http(s)://<your domain/ip>/?keywords=<your keywords>
+3. and it will be automated run and saved to firebase
+
 #in production mode
 please follow this tutorial https://www.digitalocean.com/community/tutorials/how-to-serve-flask-applications-with-uwsgi-and-nginx-on-ubuntu-14-04 or https://www.youtube.com/watch?v=QUYCiIkzZlA  and add 7th command in #how to use# 
