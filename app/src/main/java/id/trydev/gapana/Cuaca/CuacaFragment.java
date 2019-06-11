@@ -6,9 +6,13 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.permissions.PermissionsListener;
@@ -29,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import id.trydev.gapana.Base.MainActivity;
 import id.trydev.gapana.Cuaca.Modal.Cuaca;
+import id.trydev.gapana.Cuaca.Modal.Location;
 import id.trydev.gapana.R;
 
 public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
@@ -44,6 +49,9 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
     private double lat, lng;
 
     private CuacaPresenter presenter;
+    private RelativeLayout bgCuaca;
+    private TextView kota, derajat, cuaca;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,13 +64,19 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
 
         context = getActivity().getApplicationContext();
 
+        bgCuaca = view.findViewById(R.id.bgCuaca);
+        kota = view.findViewById(R.id.kota);
+        derajat = view.findViewById(R.id.derajat);
+        cuaca = view.findViewById(R.id.cuaca);
+        progressBar = view.findViewById(R.id.progressBar);
+
         mapView = view.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
-        presenter = new CuacaPresenter(this, context);
-
         mapView.getMapAsync(this);
 
+        presenter = new CuacaPresenter(this, context);
+        presenter.getDataCuaca();
     }
 
 
@@ -85,18 +99,14 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
         IconFactory iconFactory = IconFactory.getInstance(getContext());
         Icon icon = iconFactory.fromResource(R.drawable.cloud);
 
-        this.mapboxMap.addMarker(
-          new MarkerOptions()
-                .position(new LatLng(-7.257472, 112.752090))
-                .icon(icon)
-                .title("surabaya")
-        );
+        presenter.getLocation();
+        presenter.getDataCuaca();
 
-        mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
+        this.mapboxMap.setOnMarkerClickListener(new MapboxMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(@NonNull Marker marker) {
-
-                Toast.makeText(context, marker.getTitle(), Toast.LENGTH_SHORT).show();
+                presenter.getDataCuaca(marker.getTitle());
+//                Toast.makeText(context, marker.getTitle(), Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
@@ -182,21 +192,55 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
 
     @Override
     public void showLoading() {
-
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void dismissLoading() {
-
+        progressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void showData(ArrayList<Cuaca> list) {
+    public void showData(Cuaca cuaca, Location location) {
+        if (bgCuaca.getVisibility() == View.GONE){
+            bgCuaca.setVisibility(View.VISIBLE);
+        }
+        bgCuaca.setVisibility(View.VISIBLE);
+        int icon = cuaca.getDailyForecasts().get(0).getDay().getIcon();
+        if (icon < 6){
+            bgCuaca.setBackgroundResource(R.drawable.cerah);
+            this.cuaca.setText("CERAH");
+        } else if (icon < 12){
+            bgCuaca.setBackgroundResource(R.drawable.berawan);
+            this.cuaca.setText("BERAWAWN");
+        } else {
+            bgCuaca.setBackgroundResource(R.drawable.hujan);
+            this.cuaca.setText("HUJAN");
+        }
+        kota.setText(location.getNama());
+        int minimum = Math.round((cuaca.getDailyForecasts().get(0).getTemperature().getMinimum().getValue() - 32) * 5/9);
+        double maximum = Math.round((cuaca.getDailyForecasts().get(0).getTemperature().getMaximum().getValue() - 32) * 5/9);
 
+        derajat.setText(String.valueOf(minimum) + " - " + String.valueOf(maximum) + " C");
     }
 
     @Override
     public void emptyData(String msg) {
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+    }
 
+    @Override
+    public void showLocation(List<Location> list) {
+        for (int i = 0; i < list.size(); i++) {
+            IconFactory iconFactory = IconFactory.getInstance(getContext());
+            Icon icon = iconFactory.fromResource(R.drawable.cloud);
+
+            this.mapboxMap.addMarker(
+                    new MarkerOptions()
+                            .position(new LatLng(Double.valueOf(list.get(i).getLatitude()), Double.valueOf(list.get(i).getLongitude())))
+                            .icon(icon)
+                            .title(list.get(i).getNama())
+            );
+        }
     }
 }
