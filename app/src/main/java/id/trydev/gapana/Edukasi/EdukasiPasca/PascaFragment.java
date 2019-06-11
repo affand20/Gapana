@@ -46,6 +46,10 @@ public class PascaFragment extends Fragment implements EdukasiPascaView{
         swipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
 
 //        adapter = new EdukasiPascaAdapter(listEdukasiPasca);
+
+        adapter = new EdukasiPascaAdapter(this.listEdukasiPasca);
+        rvPasca.setAdapter(adapter);
+
         presenter = new EdukasiPascaPresenter(this);
 
         rvPasca.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
@@ -89,9 +93,8 @@ public class PascaFragment extends Fragment implements EdukasiPascaView{
     @Override
     public void populateData(List<EdukasiPasca> listEdukasiPasca) {
         this.listEdukasiPasca.clear();
-        this.listEdukasiPasca = listEdukasiPasca;
-        adapter = new EdukasiPascaAdapter(this.listEdukasiPasca);
-        rvPasca.setAdapter(adapter);
-//        adapter.notifyDataSetChanged();
+        this.listEdukasiPasca.addAll(listEdukasiPasca);
+
+        adapter.notifyDataSetChanged();
     }
 }

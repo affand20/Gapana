@@ -1,6 +1,7 @@
 package id.trydev.gapana.Berita;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,6 +20,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ImageClickListener;
 import com.synnapps.carouselview.ImageListener;
@@ -32,6 +37,7 @@ import id.trydev.gapana.Berita.Adapter.BeritaAdapter;
 import id.trydev.gapana.Berita.Adapter.CarouselAdapter;
 import id.trydev.gapana.Berita.Model.Berita;
 import id.trydev.gapana.R;
+import id.trydev.gapana.Utils.GlideApp;
 import id.trydev.gapana.Utils.ItemClickSupport;
 
 public class BeritaFragment extends Fragment implements BeritaView {
@@ -70,17 +76,23 @@ public class BeritaFragment extends Fragment implements BeritaView {
 
         rvBerita.setLayoutManager(new GridLayoutManager(getActivity().getApplicationContext(), 0b10));
 
+        beritaAdapter = new BeritaAdapter(this.listBerita);
+        rvBerita.setAdapter(beritaAdapter);
+
         presenter = new BeritaPresenter(this);
 
-        presenter.get5NewestBerita();
+//        presenter.get5NewestBerita();
         presenter.getBerita();
 
-        carouselView.setImageListener(new ImageListener() {
-            @Override
-            public void setImageForPosition(int position, ImageView imageView) {
-                imageView.setImageResource(R.drawable.dummy_image);
-            }
-        });
+        carouselView.setPageCount(listBeritaCarousel.size());
+        carouselView.setViewListener(viewListener);
+
+//        carouselView.setImageListener(new ImageListener() {
+//            @Override
+//            public void setImageForPosition(int position, ImageView imageView) {
+//                imageView.setImageResource(R.drawable.dummy_image);
+//            }
+//        });
         carouselView.setImageClickListener(new ImageClickListener() {
             @Override
             public void onClick(int position) {
@@ -95,7 +107,6 @@ public class BeritaFragment extends Fragment implements BeritaView {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                presenter.get5NewestBerita();
                 presenter.getBerita();
             }
         });
@@ -135,18 +146,61 @@ public class BeritaFragment extends Fragment implements BeritaView {
     public void show5NewestBerita(List<Berita> listCarousel) {
         this.listBeritaCarousel.clear();
         this.listBeritaCarousel.addAll(listCarousel);
+        Log.d("LIST CAROUSEL", "show5NewestBerita: "+listCarousel.get(0).getTitle());
 
         carouselAdapter = new CarouselAdapter(getActivity().getApplicationContext(), this.listBeritaCarousel);
-        carouselView.setViewListener(carouselAdapter);
         carouselView.setPageCount(listBeritaCarousel.size());
+
+        carouselView.setViewListener(carouselAdapter);
     }
+
+    private ViewListener viewListener = new ViewListener() {
+        @Override
+        public View setViewForPosition(int position) {
+            View view = getActivity().getLayoutInflater().inflate(R.layout.item_carousel_berita, null);
+
+            System.out.println("JUDUL BERITA -> "+listBerita.get(position).getTitle());
+
+            ImageView ivBerita = view.findViewById(R.id.iv_carousel_berita);
+            TextView judulBerita = view.findViewById(R.id.judul_berita);
+
+//        ivBerita.setImageResource(R.drawable.dummy_image);
+            GlideApp.with(getActivity())
+                    .asBitmap()
+                    .centerCrop()
+                    .load(listBeritaCarousel.get(position).getPhoto_url())
+                    .thumbnail(0.25f)
+                    .addListener(new RequestListener<Bitmap>() {
+                        @Override
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
+                            Log.d("LOAD FAILED", "onLoadFailed: "+e.getMessage());
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
+                            Log.d("LOAD READY", "onResourceReady: SUCCESS");
+                            return false;
+                        }
+                    })
+                    .placeholder(R.color.colorAccent)
+                    .into(ivBerita);
+            judulBerita.setText(listBeritaCarousel.get(position).getTitle());
+
+            return view;
+        }
+    };
 
     @Override
     public void showListBerita(List<Berita> listBeritaGrid) {
         this.listBerita.clear();
         this.listBerita.addAll(listBeritaGrid);
-        Log.d("LIST BERITA", "showListBerita: "+listBerita.get(0).getUrl());
-        beritaAdapter = new BeritaAdapter(this.listBerita);
-        rvBerita.setAdapter(beritaAdapter);
+//        Log.d("LIST BERITA", "showListBerita: "+listBerita.get(0).getUrl());
+        beritaAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void sendToast(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
 }

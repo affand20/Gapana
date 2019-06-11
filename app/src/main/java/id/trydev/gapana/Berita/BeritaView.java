@@ -10,4 +10,5 @@ public interface BeritaView {
     void hideLoading();
     void show5NewestBerita(List<Berita> listCarousel);
     void showListBerita(List<Berita> listBeritaGrid);
+    void sendToast(String msg);
 }

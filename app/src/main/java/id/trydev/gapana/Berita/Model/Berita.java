@@ -2,28 +2,28 @@ package id.trydev.gapana.Berita.Model;
 
 public class Berita {
 
-    private String judul;
+    private String title;
     private String url;
-    private String image;
+    private String photo_url;
     private String tanggal;
     private String sumber;
 
     public Berita(){}
 
-    public Berita(String judul, String url, String image, String tanggal, String sumber) {
-        this.judul = judul;
+    public Berita(String judul, String url, String photo_url, String tanggal, String sumber) {
+        this.title = judul;
         this.url = url;
-        this.image = image;
+        this.photo_url = photo_url;
         this.tanggal = tanggal;
         this.sumber = sumber;
     }
 
-    public String getJudul() {
-        return judul;
+    public String getTitle() {
+        return title;
     }
 
-    public void setJudul(String judul) {
-        this.judul = judul;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getUrl() {
@@ -34,12 +34,12 @@ public class Berita {
         this.url = url;
     }
 
-    public String getImage() {
-        return image;
+    public String getPhoto_url() {
+        return photo_url;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setPhoto_url(String photo_url) {
+        this.photo_url = photo_url;
     }
 
     public String getTanggal() {

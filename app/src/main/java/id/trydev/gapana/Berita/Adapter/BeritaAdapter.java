@@ -52,15 +52,15 @@ public class BeritaAdapter extends RecyclerView.Adapter<BeritaAdapter.ViewHolder
         }
 
         public void bindItem(Berita item){
-//            GlideApp.with(itemView)
-//                    .asBitmap()
-//                    .centerCrop()
-//                    .load(R.drawable.dummy_image)
-//                    .thumbnail(0.25f)
-//                    .placeholder(R.color.colorAccent)
-//                    .into(imgBerita);
+            GlideApp.with(itemView)
+                    .asBitmap()
+                    .centerCrop()
+                    .load(item.getPhoto_url())
+                    .thumbnail(0.25f)
+                    .placeholder(R.color.colorAccent)
+                    .into(imgBerita);
             imgBerita.setImageResource(R.drawable.dummy_image);
-            judulBerita.setText(item.getJudul());
+            judulBerita.setText(item.getTitle());
             sumberBerita.setText(item.getSumber());
         }
     }

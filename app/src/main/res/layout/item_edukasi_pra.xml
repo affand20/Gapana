@@ -32,11 +32,11 @@
             android:textStyle="bold"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:id="@+id/judul"/>
+            android:id="@+id/title"/>
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/judul"
+            android:layout_below="@+id/title"
             android:id="@+id/kategori"
             android:text="kategori"
             android:layout_marginTop="4dp"

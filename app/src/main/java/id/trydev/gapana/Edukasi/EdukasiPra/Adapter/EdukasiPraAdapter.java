@@ -50,7 +50,7 @@ public class EdukasiPraAdapter extends RecyclerView.Adapter<EdukasiPraAdapter.Vi
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            judul = itemView.findViewById(R.id.judul);
+            judul = itemView.findViewById(R.id.title);
             kategori = itemView.findViewById(R.id.kategori);
             berita = itemView.findViewById(R.id.berita);
             card = itemView.findViewById(R.id.card);

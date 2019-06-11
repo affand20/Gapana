@@ -26,6 +26,7 @@ public class EdukasiPra implements Serializable {
     @ColumnInfo(name = "warnaBg")
     private String warnaBg;
 
+    @Ignore
     public EdukasiPra(){};
 
     public EdukasiPra(int id, String judul, String kategori, String konten, String listGambar, String warnaBg) {
