@@ -104,11 +104,3 @@ class TirtoScrap(MethodView):
     def get(self):
         pass
         
-
-# @app.route('/merdeka')
-# def merdeka_save():
-#     doc_ref = db.collection(u'merdeka').document(u'merdeka')
-
-# @app.route('/jatimnet')
-# def jatimnet_save():
-#     doc_ref = db.collection(u'jatimnet').document(u'jatimnet')
