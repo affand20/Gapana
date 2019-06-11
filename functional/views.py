@@ -105,11 +105,6 @@ class TirtoScrap(MethodView):
         pass
         
 
-
-# @app.route('/kompas')
-# def kompas_save():
-#     doc_ref = db.collection(u'kompas').document(u'kompas')
-
 # @app.route('/merdeka')
 # def merdeka_save():
 #     doc_ref = db.collection(u'merdeka').document(u'merdeka')
