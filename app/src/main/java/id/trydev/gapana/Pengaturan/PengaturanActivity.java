@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import id.trydev.gapana.R;
 
@@ -30,6 +31,7 @@ public class PengaturanActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Pengaturan");
 
         Switch switchNotif = findViewById(R.id.switchNotif);
+        Switch switchNotif2 = findViewById(R.id.switchNotif_2);
 
         switchNotif.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -41,6 +43,29 @@ public class PengaturanActivity extends AppCompatActivity {
                  }
             }
         });
+
+        switchNotif2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b){
+                    preferences.setTogleNotif2(1);
+                } else{
+                    preferences.setTogleNotif2(0);
+                }
+            }
+        });
+
+        if (preferences.getTogleNotif() == 1) {
+            switchNotif.setChecked(true);
+        } else {
+            switchNotif.setChecked(false);
+        }
+
+        if (preferences.getTogleNotif2() == 1) {
+            switchNotif2.setChecked(true);
+        } else {
+            switchNotif2.setChecked(false);
+        }
 
         TextView faqBtn = (TextView) findViewById(R.id.faqBtn);
         faqBtn.setOnClickListener(new View.OnClickListener() {

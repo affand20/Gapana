@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity
             importDbNomorTelepon();
 
             preferences.setFirstRun(1);
+            preferences.setTogleNotif(1);
+            preferences.setTogleNotif2(1);
         }
 
         Mapbox.getInstance(this, BuildConfig.TOKEN);

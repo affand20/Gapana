@@ -11,6 +11,7 @@ public class AppPreferences {
     private static final String LAST_LONGITUDE = "last_longitude";
 
     private static final String TOGLE_NOTIF = "togle_notif";
+    private static final String TOGLE_NOTIF2 = "togle_notif2";
 
     private final SharedPreferences prefs;
 
@@ -39,6 +40,17 @@ public class AppPreferences {
 
     public int getTogleNotif(){
         return prefs.getInt(TOGLE_NOTIF,0);
+    }
+
+    public void setTogleNotif2(int togle_notif){
+        SharedPreferences.Editor editor = prefs.edit();
+//        editor.putString(FIRST_RUN, token);
+        editor.putInt(TOGLE_NOTIF2, togle_notif);
+        editor.apply();
+    }
+
+    public int getTogleNotif2(){
+        return prefs.getInt(TOGLE_NOTIF2,0);
     }
 
     //-----------------------------------------------------------

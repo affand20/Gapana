@@ -49,15 +49,19 @@ public class FirebaseService extends FirebaseMessagingService {
             Log.d(TAG, "DISTANCE : "+distance[0]);
 
             if (distance[0]<=150){
-                sendNotification("Waspada Bencana", "latitude : "+preferences.getLastLatitude()+" longitude : "+preferences.getLastLongitude());
+                if (preferences.getTogleNotif()==1){
+                    sendNotification("Waspada Bencana", "latitude : "+preferences.getLastLatitude()+" longitude : "+preferences.getLastLongitude());
 
-                startActivity(
-                        new Intent(this, NotifikasiActivity.class)
-                                .putExtra("magnitude", remoteMessage.getData().get("magnitude"))
-                                .putExtra("type", remoteMessage.getData().get("type"))
-                                .putExtra("info", remoteMessage.getData().get("loc")));
+                    startActivity(
+                            new Intent(this, NotifikasiActivity.class)
+                                    .putExtra("magnitude", remoteMessage.getData().get("magnitude"))
+                                    .putExtra("type", remoteMessage.getData().get("type"))
+                                    .putExtra("info", remoteMessage.getData().get("loc")));
+                }
             } else{
-                sendNotification("Informasi Bencana", "Telah terjadi gempa "+remoteMessage.getData().get("magnitude")+" SR "+remoteMessage.getData().get("loc"));
+                if (preferences.getTogleNotif2() == 2){
+                    sendNotification("Informasi Bencana", "Telah terjadi gempa "+remoteMessage.getData().get("magnitude")+" SR "+remoteMessage.getData().get("loc"));
+                }
             }
 
         }

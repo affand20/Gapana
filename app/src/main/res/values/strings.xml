@@ -12,7 +12,7 @@
     <string name="Tentang">GAPANA adalah aplikasi berbasis Android untuk Melihat Prakiraan Cuaca, Edukasi Bencana, melihat berita bencana, dan juga
     melihat Posko Evakuasi disekitar kejadian bencana dari pengguna. Aplikasi ini juga dapat berfungsi sebagai Early Warning bagi pengguna jika
     berada pada radius 100 m dari tempat bencana.</string>
-    <string name="penjelasanNotifSekitar">Anda dapat menyalakan / mematikan Notifikasi bencana yang berlokasi 100 m dari anda </string>
+    <string name="penjelasanNotifSekitar">Anda dapat menyalakan / mematikan Notifikasi Bencana</string>
     <string name="penjelasanNotifBencana">Anda dapat menyalakan / mematikan Notifikasi Bencana di Wilayah Seluruh Indonesia</string>
     <string name="channel_id">101</string>
     <string name="ch_name">gapana</string>
