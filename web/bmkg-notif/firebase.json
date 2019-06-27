@@ -1,0 +1,14 @@
+{
+  "hosting": {
+    "public": "public/dist",
+    "rewrites": [{
+      "source": "/scrap",
+      "function": "scrapper"
+    }],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ]
+  }
+}
