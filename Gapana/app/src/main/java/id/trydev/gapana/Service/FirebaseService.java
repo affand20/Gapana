@@ -48,7 +48,8 @@ public class FirebaseService extends FirebaseMessagingService {
                     distance);
             Log.d(TAG, "DISTANCE : "+distance[0]);
 
-            if (distance[0]<=150){
+            if (distance[0]<=1500){
+                Log.d(TAG, "onMessageReceived: "+preferences.getTogleNotif());
                 if (preferences.getTogleNotif()==1){
                     sendNotification("Waspada Bencana", "latitude : "+preferences.getLastLatitude()+" longitude : "+preferences.getLastLongitude());
 
@@ -59,7 +60,8 @@ public class FirebaseService extends FirebaseMessagingService {
                                     .putExtra("info", remoteMessage.getData().get("loc")));
                 }
             } else{
-                if (preferences.getTogleNotif2() == 2){
+                Log.d(TAG, "onMessageReceived: "+preferences.getTogleNotif2());
+                if (preferences.getTogleNotif2() == 1){
                     sendNotification("Informasi Bencana", "Telah terjadi gempa "+remoteMessage.getData().get("magnitude")+" SR "+remoteMessage.getData().get("loc"));
                 }
             }

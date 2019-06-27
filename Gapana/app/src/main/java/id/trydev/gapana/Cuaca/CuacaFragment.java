@@ -1,12 +1,16 @@
 package id.trydev.gapana.Cuaca;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +19,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.location.LocationEngineResult;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.annotations.Icon;
@@ -36,6 +43,9 @@ import id.trydev.gapana.Cuaca.Modal.Cuaca;
 import id.trydev.gapana.Cuaca.Modal.Location;
 import id.trydev.gapana.R;
 
+import static android.support.constraint.Constraints.TAG;
+import static id.trydev.gapana.Base.MainActivity.preferences;
+
 public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCallback, MapboxMap.OnMapClickListener, PermissionsListener {
 
     private MapView mapView;
@@ -44,7 +54,7 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
     private PermissionsManager permissionsManager;
     private LocationComponent locationComponent;
     private LocationEngine locationEngine;
-
+    private double lastLatitude, lastLongitude;
 
     private double lat, lng;
 
@@ -77,6 +87,32 @@ public class CuacaFragment extends Fragment implements CuacaView, OnMapReadyCall
 
         presenter = new CuacaPresenter(this, context);
         presenter.getDataCuaca();
+
+        locationEngine = LocationEngineProvider.getBestLocationEngine(getActivity());
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION},101);
+
+        } else{
+            locationEngine.getLastLocation(new LocationEngineCallback<LocationEngineResult>() {
+                @Override
+                public void onSuccess(LocationEngineResult result) {
+                    android.location.Location lastLocation = result.getLastLocation();
+                    lastLatitude = lastLocation.getLatitude();
+                    lastLongitude = lastLocation.getLongitude();
+                    preferences.setLastLatitude(String.valueOf(lastLatitude));
+                    preferences.setLastLongitude(String.valueOf(lastLongitude));
+
+                }
+
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(context, exception.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+        Log.d(TAG, "Last Latitude "+lastLatitude);
+        Log.d(TAG, "Last Longitude "+lastLongitude);
+
     }
 
 

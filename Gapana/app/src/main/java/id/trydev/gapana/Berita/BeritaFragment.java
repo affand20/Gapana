@@ -146,7 +146,7 @@ public class BeritaFragment extends Fragment implements BeritaView {
     public void show5NewestBerita(List<Berita> listCarousel) {
         this.listBeritaCarousel.clear();
         this.listBeritaCarousel.addAll(listCarousel);
-        Log.d("LIST CAROUSEL", "show5NewestBerita: "+listCarousel.get(0).getTitle());
+//        Log.d("LIST CAROUSEL", "show5NewestBerita: "+listCarousel.get(0).getTitle());
 
         carouselAdapter = new CarouselAdapter(getActivity().getApplicationContext(), this.listBeritaCarousel);
         carouselView.setPageCount(listBeritaCarousel.size());
@@ -169,7 +169,7 @@ public class BeritaFragment extends Fragment implements BeritaView {
                     .asBitmap()
                     .centerCrop()
                     .load(listBeritaCarousel.get(position).getPhoto_url())
-                    .thumbnail(0.25f)
+                    .thumbnail(0.025f)
                     .addListener(new RequestListener<Bitmap>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
