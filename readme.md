@@ -4,10 +4,8 @@ Aplikasi tanggap bencana yang bertujuan untuk mengedukasi orang tentang apa yang
 
 *Untuk dapat melihat notifikasi, perlu menjalankan web backend terlebih dahulu, karena service yang kami gunakan tidak mendukung cron job gratis.
 
-# Struktur File
+## Web Backend
 
-Proyek ini terdiri dari 2 folder utama, yakni **Gapana** dan **Web**.
-Folder **Gapana** berisi proyek dan aplikasi Gapana itu sendiri.
 Folder **Web** berisi proyek website backend yang kami gunakan untuk scrap berita, scrap bencana terkini dari website BMKG, serta untuk mengirim notifikasi ke aplikasi Gapana.
 
 ## Menginstall Aplikasi Gapana pada Smartphone
